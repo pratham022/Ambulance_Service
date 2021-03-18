@@ -8,6 +8,8 @@
     tools:openDrawer="start"
     tools:context=".MainActivity">
 
+
+
    <RelativeLayout
        android:layout_width="wrap_content"
        android:layout_height="wrap_content">
@@ -32,5 +34,7 @@
         app:menu="@menu/iconmenu"
         app:headerLayout="@layout/header_menu"
         android:layout_gravity="start"/>
+
+
 
 </androidx.drawerlayout.widget.DrawerLayout>
