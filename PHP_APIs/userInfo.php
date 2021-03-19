@@ -1,9 +1,12 @@
 <?php
-$db_name="copy_database";
+require ('constants.php');
+
+/*$db_name="copy_database";
 $mysql_username="root";
 $mysql_password="";
-$server_name="localhost";
-$conn=mysqli_connect($server_name,$mysql_username,$mysql_password,$db_name);
+$server_name="localhost";*/
+
+$conn=mysqli_connect($server_name,$user_name,$password,$db_name);
 
 $email =$_POST["email"];;
 
