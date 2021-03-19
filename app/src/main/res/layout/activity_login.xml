@@ -25,7 +25,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <EditText
-        android:id="@+id/txtEmail"
+        android:id="@+id/txtPhone"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginStart="32dp"
@@ -33,8 +33,8 @@
         android:layout_marginTop="60dp"
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
-        android:hint="@string/email"
-        android:inputType="textEmailAddress"
+        android:hint="@string/phone"
+        android:inputType="phone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -55,7 +55,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtEmail"
+        app:layout_constraintTop_toBottomOf="@+id/txtPhone"
         android:autofillHints="" />
 
     <RadioGroup
@@ -74,20 +74,25 @@
         app:layout_constraintTop_toBottomOf="@+id/txtPassword">
 
         <RadioButton
+            android:id="@+id/radioUser"
             android:layout_width="173dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:onClick="onRadioButtonClicked"
             android:text="USER" />
 
         <RadioButton
+            android:id="@+id/radioDriver"
             android:layout_width="195dp"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:onClick="onRadioButtonClicked"
             android:text="DRIVER" />
 
     </RadioGroup>
 
     <Button
+        android:id="@+id/btnLogin"
         android:layout_width="match_parent"
         android:layout_height="42dp"
         android:layout_marginStart="32dp"
@@ -96,6 +101,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginRight="32dp"
         android:text="@string/login"
+        android:onClick="loginClick"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
