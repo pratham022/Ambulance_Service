@@ -2,6 +2,7 @@ package com.example.ambulanceservice;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,7 +25,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements AsyncResponseString{
 
     private EditText txtPhone, txtPassword;
     private Button btnLogin;
@@ -76,6 +77,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if (validPhone && validPass && validType) {
             BackgroundLoginWorker backgroundLoginWorker = new BackgroundLoginWorker(this);
+            backgroundLoginWorker.delegate = this;
             backgroundLoginWorker.execute(phone, pass, type);
 
         }
@@ -93,6 +95,23 @@ public class LoginActivity extends AppCompatActivity {
                 if (checked)
                     type = "driver";
                 break;
+        }
+    }
+
+    @Override
+    public void processStringFinish(String s) {
+        Log.d(TAG, s);
+        Log.d(TAG, "In Process finish");
+        try {
+            JSONObject response = new JSONObject(s);
+            if (response.getString("status").equals("1")) {
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
+            } else {
+                Toast.makeText(getApplicationContext(), response.getString("data"), Toast.LENGTH_LONG).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
         }
     }
 }

@@ -25,6 +25,8 @@ public class BackgroundLoginWorker extends AsyncTask<String, Void, String> {
     Context context;
     private String TAG = "BackgroundLoginWorker";
 
+    public AsyncResponseString delegate = null;
+
     BackgroundLoginWorker(Context ctx) {
         context = ctx;
     }
@@ -75,12 +77,6 @@ public class BackgroundLoginWorker extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        try {
-            // This is the response object
-            JSONObject response = new JSONObject(s);
-
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        delegate.processStringFinish(s);
     }
 }
