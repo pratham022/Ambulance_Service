@@ -10,4 +10,5 @@
     <string name="confirm_password">Confirm Password</string>
     <string name="driver">DRIVER</string>
     <string name="user">USER</string>
+    <string name="name">Name</string>
 </resources>

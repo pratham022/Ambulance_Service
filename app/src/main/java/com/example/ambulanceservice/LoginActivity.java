@@ -68,7 +68,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
             validPass = true;
         }
 
-        if (type == "") {
+        if (type.equals("")) {
             Toast.makeText(LoginActivity.this, "Please select the customer type(User/Driver)", Toast.LENGTH_SHORT).show();
             validType = false;
         } else {
@@ -113,5 +113,10 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         } catch (JSONException e) {
             e.printStackTrace();
         }
+    }
+
+    public void signupClick(View view) {
+        Intent intent = new Intent(this, RegisterActivity.class);
+        startActivity(intent);
     }
 }
