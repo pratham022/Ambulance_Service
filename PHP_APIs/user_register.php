@@ -1,10 +1,10 @@
 <?php require("constants.php");
 $conn = mysqli_connect($server_name, $user_name, $password, $db_name);
-$name = "Tanaya";
-$email = "tanaya58@gmail.com";
-$phone = "7774031715";
-$password = "pict@123";
-$address = "";
+
+$phone = $_POST["phone"];
+$name = $_POST["name"];
+$pass = $_POST["pass"];
+
 if(!$conn) {
 	$response = array(
 		"status" => "0",
@@ -13,17 +13,17 @@ if(!$conn) {
 	die(json_encode($response));
 }
 else {
-	$already_exists = "SELECT * FROM customer WHERE email='$email' OR phone='$phone'";
+	$already_exists = "SELECT * FROM customer WHERE phone='$phone'";
 	$result = mysqli_query($conn, $already_exists);
 	if(mysqli_num_rows($result) > 0) {
 		$response = array(
 			"status" => "0",
-			"data" => "Email or Phone already exists"
+			"data" => "User already exists"
 		);
 		die(json_encode($response));
 	}
 	else {
-		$register_user_query = "INSERT INTO customer(name, email, phone, address, password) VALUES ('$name', '$email', '$phone', '$address', '$password')";
+		$register_user_query = "INSERT INTO customer(name, phone, password) VALUES ('$name', '$phone', '$pass')";
 		$result = mysqli_query($conn, $register_user_query);
 		if ($result) {
 			$response = array(
