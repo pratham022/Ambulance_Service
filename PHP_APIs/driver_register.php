@@ -1,12 +1,13 @@
 <?php require("constants.php");
 $conn = mysqli_connect($server_name, $user_name, $password, $db_name);
-$first_name = "Sachin";
-$last_name = "Rao";
-$birth_date = "";
-$email = "sachin@gmail.com";
-$phone = "";
-$password = "pict@123";
-$address = "";
+
+$name = $_POST["name"];
+$license_no=$_POST["license_no"];
+$expiry_date=$_POST["expiry_date"];
+$phone = $_POST["phone"];
+$password = $_POST["password"];
+$address = $_POST["address"];
+
 if(!$conn) {
 	$response = array(
 		"status" => "0",
@@ -15,7 +16,7 @@ if(!$conn) {
 	die(json_encode($response));
 }
 else {
-	$already_exists = "SELECT * FROM customer WHERE email='$email' OR phone='$phone'";
+	$already_exists = "SELECT * FROM driver WHERE license_no='$license_no' OR phone='$phone'";
 	$result = mysqli_query($conn, $already_exists);
 	if(mysqli_num_rows($result) > 0) {
 		$response = array(
@@ -25,9 +26,10 @@ else {
 		die(json_encode($response));
 	}
 	else {
-		$register_user_query = "INSERT INTO customer(name, email, phone, address, password) VALUES ('$name', '$email', '$phone', '$address', '$password')";
+		$register_user_query = "INSERT INTO driver(name,phone,password,address,license_no,expiry_date,working) VALUES ('$name','$phone', '$password','$address','$license_no','$expiry_date',1);";
 		$result = mysqli_query($conn, $register_user_query);
-		if ($result) {
+
+	if ($result) {
 			$response = array(
 				"status" => "1",
 				"data" => "Registered Successfully"
@@ -36,10 +38,12 @@ else {
 		else {
 			$response = array(
 				"status" => "0",
-				"data" => "Unable to Register"
+				"data" => "Not able to register"
+
 			);
 		}
 		die(json_encode($response));
+
 	}
 }
 ?>

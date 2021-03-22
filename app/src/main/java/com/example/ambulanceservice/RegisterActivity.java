@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,11 +37,21 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
         switch (view.getId()) {
             case R.id.radioUser:
                 if (checked)
+                {
+                    Button btn=(Button)findViewById(R.id.btnRegister);
+                    btn.setText("REGISTER");
                     type = "customer";
+                }
+
                 break;
             case R.id.radioDriver:
                 if (checked)
+                {
+                    Button btn=(Button)findViewById(R.id.btnRegister);
+                    btn.setText("Next");
                     type = "driver";
+                }
+
                 break;
         }
     }
@@ -106,10 +117,23 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
 
         Log.d(TAG, "Helllllo");
         if (validName && validPhone && additionalFlag1 && additionalFlag2 && validPass && validType) {
-            Log.d(TAG, "Registering you in!");
-            BackgroundRegisterWorker backgroundRegisterWorker = new BackgroundRegisterWorker(this);
-            backgroundRegisterWorker.delegate = this;
-            backgroundRegisterWorker.execute(phone, name, pass, type);
+            if(type=="driver")
+            {
+                System.out.println("Here");
+                Intent intent=new Intent(this,RegisterDriver.class);
+                intent.putExtra("name",name);
+                intent.putExtra("phone",phone);
+                intent.putExtra("password",pass);
+                startActivity(intent);
+            }
+            else
+            {
+                Log.d(TAG, "Registering you in!");
+                BackgroundRegisterWorker backgroundRegisterWorker = new BackgroundRegisterWorker(this);
+                backgroundRegisterWorker.delegate = this;
+                backgroundRegisterWorker.execute(phone, name, pass, type);
+            }
+
         } else {
             Log.d(TAG, "SOme Error");
             Toast.makeText(this, "Some Error!", Toast.LENGTH_SHORT).show();

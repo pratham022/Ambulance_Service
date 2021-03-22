@@ -113,13 +113,13 @@
             android:onClick="onRadioButtonRegisterClicked"
             android:text="@string/user" />
 
-<!--        <RadioButton-->
-<!--            android:id="@+id/radioDriver"-->
-<!--            android:layout_width="195dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_gravity="center"-->
-<!--            android:onClick="onRadioButtonRegisterClicked"-->
-<!--            android:text="@string/driver" />-->
+        <RadioButton
+            android:id="@+id/radioDriver"
+            android:layout_width="195dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:onClick="onRadioButtonRegisterClicked"
+            android:text="@string/driver" />
 
     </RadioGroup>
 

@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
 //       Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-//       Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+//       Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
 //       startActivity(intent);
 
     }
