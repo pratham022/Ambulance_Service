@@ -3,6 +3,7 @@ package com.example.ambulanceservice;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -24,6 +26,13 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+        if(sh.contains("phone")){
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        }
 
         txtName = findViewById(R.id.txtName);
         txtPhone = findViewById(R.id.txtPhone);
@@ -147,6 +156,9 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
         try {
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {
+                SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("name", phone);
                 Intent i = new Intent(this, MainActivity.class);
                 startActivity(i);
             } else {

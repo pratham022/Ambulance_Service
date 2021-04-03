@@ -3,6 +3,7 @@ package com.example.ambulanceservice;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -11,8 +12,10 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import java.util.Iterator;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -25,6 +28,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 
+
 public class LoginActivity extends AppCompatActivity implements AsyncResponseString{
 
     private EditText txtPhone, txtPassword;
@@ -36,6 +40,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+
+        if(sh.contains("phone")){
+            Intent i = new Intent(this, MainActivity.class);
+            startActivity(i);
+        }
 
         txtPhone = findViewById(R.id.txtPhone);
         txtPassword = findViewById(R.id.txtPassword);
@@ -105,6 +115,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         try {
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {
+                JSONArray jsonArray = (JSONArray) response.get("data");
+                String phone=jsonArray.getString(3);
+                SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sharedPreferences.edit();
+                myEdit.putString("name", phone);
                 Intent i = new Intent(this, MainActivity.class);
                 startActivity(i);
             } else {
