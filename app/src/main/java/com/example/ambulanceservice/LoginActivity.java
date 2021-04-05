@@ -40,11 +40,17 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
-        if(sh.contains("phone")){
+        if(sh.getString("phone", null) != null){
+            Log.d(TAG, "Phone no found");
+            System.out.println("Phone no found");
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
+        } else {
+            Log.d(TAG, "Not found!!!!!!");
+            System.out.println("Not found!!!!!!");
         }
 
         txtPhone = findViewById(R.id.txtPhone);
@@ -115,11 +121,14 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         try {
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {
-                JSONArray jsonArray = (JSONArray) response.get("data");
-                String phone=jsonArray.getString(3);
+                JSONObject jsonObject =  response.getJSONObject("data");
+                String phone=jsonObject.getString("phone");
+
                 SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString("name", phone);
+                myEdit.putString("phone", phone);
+                myEdit.apply();
+
                 Intent i = new Intent(this, MainActivity.class);
                 startActivity(i);
             } else {

@@ -29,7 +29,7 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
 
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
-        if(sh.contains("phone")){
+        if(sh.getString("phone", null) != null){
             Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
         }
@@ -156,9 +156,12 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
         try {
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {
+
                 SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString("name", phone);
+                myEdit.putString("phone", phone);
+                myEdit.apply();
+
                 Intent i = new Intent(this, MainActivity.class);
                 startActivity(i);
             } else {
