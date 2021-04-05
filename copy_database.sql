@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.0.2
+-- version 5.0.4
 -- https://www.phpmyadmin.net/
 --
--- Host: 127.0.0.1:3306
--- Generation Time: Mar 16, 2021 at 05:32 PM
--- Server version: 5.7.31
--- PHP Version: 7.3.21
+-- Host: localhost
+-- Generation Time: Apr 05, 2021 at 08:19 PM
+-- Server version: 10.4.17-MariaDB
+-- PHP Version: 8.0.2
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -27,9 +27,8 @@ SET time_zone = "+00:00";
 -- Table structure for table `cab`
 --
 
-DROP TABLE IF EXISTS `cab`;
-CREATE TABLE IF NOT EXISTS `cab` (
-  `cab_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `cab` (
+  `cab_id` int(11) NOT NULL,
   `license_plate` varchar(50) NOT NULL,
   `manufacture_year` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL,
@@ -37,10 +36,7 @@ CREATE TABLE IF NOT EXISTS `cab` (
   `cab_lng` varchar(20) NOT NULL,
   `car_model_id` int(11) DEFAULT NULL,
   `owner_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`cab_id`),
-  UNIQUE KEY `license_plate` (`license_plate`),
-  KEY `car_model_id` (`car_model_id`),
-  KEY `owner_id` (`owner_id`)
+  `driver_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -49,24 +45,19 @@ CREATE TABLE IF NOT EXISTS `cab` (
 -- Table structure for table `cab_ride`
 --
 
-DROP TABLE IF EXISTS `cab_ride`;
-CREATE TABLE IF NOT EXISTS `cab_ride` (
-  `cab_ride_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `cab_ride` (
+  `cab_ride_id` int(11) NOT NULL,
   `src_lat` varchar(20) NOT NULL,
   `src_long` varchar(20) NOT NULL,
   `dest_lat` varchar(20) NOT NULL,
   `dest_long` varchar(20) NOT NULL,
-  `gps_start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `gps_start_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `gps_end_time` timestamp NULL DEFAULT NULL,
   `price` int(11) NOT NULL,
-  `cancel` tinyint(1) NOT NULL,
+  `status` int(11) NOT NULL,
   `shift_id` int(11) DEFAULT NULL,
   `payment_id` int(11) DEFAULT NULL,
-  `cust_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`cab_ride_id`),
-  KEY `cab_ride_ibfk_1` (`payment_id`),
-  KEY `cab_ride_ibfk_2` (`cust_id`),
-  KEY `shift_id` (`shift_id`)
+  `cust_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -75,12 +66,10 @@ CREATE TABLE IF NOT EXISTS `cab_ride` (
 -- Table structure for table `car_model`
 --
 
-DROP TABLE IF EXISTS `car_model`;
-CREATE TABLE IF NOT EXISTS `car_model` (
-  `car_model_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `car_model` (
+  `car_model_id` int(11) NOT NULL,
   `model_name` varchar(100) NOT NULL,
-  `model_description` text NOT NULL,
-  PRIMARY KEY (`car_model_id`)
+  `model_description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -89,16 +78,25 @@ CREATE TABLE IF NOT EXISTS `car_model` (
 -- Table structure for table `customer`
 --
 
-DROP TABLE IF EXISTS `customer`;
-CREATE TABLE IF NOT EXISTS `customer` (
-  `cust_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `customer` (
+  `cust_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
+  `email` varchar(100) DEFAULT NULL,
   `phone` varchar(12) NOT NULL,
-  `address` text,
-  `password` varchar(40) NOT NULL,
-  PRIMARY KEY (`cust_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4;
+  `address` text DEFAULT NULL,
+  `password` varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`cust_id`, `name`, `email`, `phone`, `address`, `password`) VALUES
+(6, 'Prathamesh Thombre', 'pthombre657@gmail.com', '7030584432', 'Ambegaon Bk, Pune', 'pict@123'),
+(7, 'Tanaya', 'tanaya58@gmail.com', '7774031715', '', 'pict@123'),
+(8, 'Ramesh', NULL, '7058974854', NULL, 'pict@123'),
+(9, 'Ramu', NULL, '9999912346', NULL, 'pict@123'),
+(10, 'Shyam', NULL, '8888812345', NULL, 'pict@123');
 
 -- --------------------------------------------------------
 
@@ -106,9 +104,8 @@ CREATE TABLE IF NOT EXISTS `customer` (
 -- Table structure for table `driver`
 --
 
-DROP TABLE IF EXISTS `driver`;
-CREATE TABLE IF NOT EXISTS `driver` (
-  `driver_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `driver` (
+  `driver_id` int(11) NOT NULL,
   `first_name` varchar(100) NOT NULL,
   `last_name` varchar(100) NOT NULL,
   `birth_date` date DEFAULT NULL,
@@ -118,15 +115,15 @@ CREATE TABLE IF NOT EXISTS `driver` (
   `password` varchar(40) NOT NULL,
   `phone` varchar(12) NOT NULL,
   `address` varchar(40) DEFAULT NULL,
-  PRIMARY KEY (`driver_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4;
+  `on_duty` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `driver`
 --
 
-INSERT INTO `driver` (`driver_id`, `first_name`, `last_name`, `birth_date`, `license_no`, `expiry_date`, `working`, `password`, `phone`, `address`) VALUES
-(1, 'Kamlesh', 'Shrouti', '2012-01-03', '772203451327', '2021-03-20', 1, '', '', NULL);
+INSERT INTO `driver` (`driver_id`, `first_name`, `last_name`, `birth_date`, `license_no`, `expiry_date`, `working`, `password`, `phone`, `address`, `on_duty`) VALUES
+(1, 'Kamlesh', 'Shrouti', '2012-01-03', '772203451327', '2021-03-20', 1, 'kamlesh@123', '9898987867', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -134,14 +131,12 @@ INSERT INTO `driver` (`driver_id`, `first_name`, `last_name`, `birth_date`, `lic
 -- Table structure for table `owner`
 --
 
-DROP TABLE IF EXISTS `owner`;
-CREATE TABLE IF NOT EXISTS `owner` (
-  `owner_id` int(11) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `owner` (
+  `owner_id` int(11) NOT NULL,
   `name` varchar(100) NOT NULL,
   `email` varchar(50) NOT NULL,
   `phone` varchar(12) NOT NULL,
-  `address` text NOT NULL,
-  PRIMARY KEY (`owner_id`)
+  `address` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -150,11 +145,9 @@ CREATE TABLE IF NOT EXISTS `owner` (
 -- Table structure for table `payment`
 --
 
-DROP TABLE IF EXISTS `payment`;
-CREATE TABLE IF NOT EXISTS `payment` (
-  `payment_id` int(11) NOT NULL AUTO_INCREMENT,
-  `type_name` varchar(50) NOT NULL,
-  PRIMARY KEY (`payment_id`)
+CREATE TABLE `payment` (
+  `payment_id` int(11) NOT NULL,
+  `type_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
@@ -163,17 +156,126 @@ CREATE TABLE IF NOT EXISTS `payment` (
 -- Table structure for table `shift`
 --
 
-DROP TABLE IF EXISTS `shift`;
-CREATE TABLE IF NOT EXISTS `shift` (
-  `shift_id` int(11) NOT NULL AUTO_INCREMENT,
-  `shift_start_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+CREATE TABLE `shift` (
+  `shift_id` int(11) NOT NULL,
+  `shift_start_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   `shift_end_time` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
   `driver_id` int(11) DEFAULT NULL,
-  `cab_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`shift_id`),
-  KEY `driver_id` (`driver_id`),
-  KEY `cab_id` (`cab_id`)
+  `cab_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `cab`
+--
+ALTER TABLE `cab`
+  ADD PRIMARY KEY (`cab_id`),
+  ADD UNIQUE KEY `license_plate` (`license_plate`),
+  ADD KEY `car_model_id` (`car_model_id`),
+  ADD KEY `owner_id` (`owner_id`),
+  ADD KEY `driver_id` (`driver_id`);
+
+--
+-- Indexes for table `cab_ride`
+--
+ALTER TABLE `cab_ride`
+  ADD PRIMARY KEY (`cab_ride_id`),
+  ADD KEY `cab_ride_ibfk_1` (`payment_id`),
+  ADD KEY `cab_ride_ibfk_2` (`cust_id`),
+  ADD KEY `shift_id` (`shift_id`);
+
+--
+-- Indexes for table `car_model`
+--
+ALTER TABLE `car_model`
+  ADD PRIMARY KEY (`car_model_id`);
+
+--
+-- Indexes for table `customer`
+--
+ALTER TABLE `customer`
+  ADD PRIMARY KEY (`cust_id`);
+
+--
+-- Indexes for table `driver`
+--
+ALTER TABLE `driver`
+  ADD PRIMARY KEY (`driver_id`);
+
+--
+-- Indexes for table `owner`
+--
+ALTER TABLE `owner`
+  ADD PRIMARY KEY (`owner_id`);
+
+--
+-- Indexes for table `payment`
+--
+ALTER TABLE `payment`
+  ADD PRIMARY KEY (`payment_id`);
+
+--
+-- Indexes for table `shift`
+--
+ALTER TABLE `shift`
+  ADD PRIMARY KEY (`shift_id`),
+  ADD KEY `driver_id` (`driver_id`),
+  ADD KEY `cab_id` (`cab_id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `cab`
+--
+ALTER TABLE `cab`
+  MODIFY `cab_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `cab_ride`
+--
+ALTER TABLE `cab_ride`
+  MODIFY `cab_ride_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `car_model`
+--
+ALTER TABLE `car_model`
+  MODIFY `car_model_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `customer`
+--
+ALTER TABLE `customer`
+  MODIFY `cust_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+
+--
+-- AUTO_INCREMENT for table `driver`
+--
+ALTER TABLE `driver`
+  MODIFY `driver_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `owner`
+--
+ALTER TABLE `owner`
+  MODIFY `owner_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `payment`
+--
+ALTER TABLE `payment`
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `shift`
+--
+ALTER TABLE `shift`
+  MODIFY `shift_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -184,7 +286,8 @@ CREATE TABLE IF NOT EXISTS `shift` (
 --
 ALTER TABLE `cab`
   ADD CONSTRAINT `cab_ibfk_1` FOREIGN KEY (`car_model_id`) REFERENCES `car_model` (`car_model_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `cab_ibfk_2` FOREIGN KEY (`owner_id`) REFERENCES `owner` (`owner_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `cab_ibfk_2` FOREIGN KEY (`owner_id`) REFERENCES `owner` (`owner_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `cab_ibfk_3` FOREIGN KEY (`driver_id`) REFERENCES `driver` (`driver_id`);
 
 --
 -- Constraints for table `cab_ride`
