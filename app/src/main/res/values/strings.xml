@@ -15,4 +15,5 @@
     <string name="name">Name</string>
     <string name="address">Address</string>
     <string name="exp_date">Expiry Date</string>
+    <string name="access_token">pk.eyJ1IjoidGFuYXlhNTA4IiwiYSI6ImNrbHM4N2tnNjFjdTcydm53YWJtNTNoNTQifQ.O-tlugyUNXfqRgV7w0kyyw</string>
 </resources>
