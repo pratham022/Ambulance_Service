@@ -1,72 +1,92 @@
 package com.example.ambulanceservice;
 
-import android.content.Intent;
+import android.annotation.SuppressLint;
 import android.location.Location;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
-
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import com.google.android.material.navigation.NavigationView;
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineListener;
-import com.mapbox.android.core.location.LocationEnginePriority;
-import com.mapbox.android.core.location.LocationEngineProvider;
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.mapboxsdk.Mapbox;
-import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.MapView;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.plugins.locationlayer.LocationLayerPlugin;
-import com.mapbox.mapboxsdk.plugins.locationlayer.modes.CameraMode;
-import com.mapbox.mapboxsdk.plugins.locationlayer.modes.RenderMode;
+import com.mapbox.mapboxsdk.maps.Style;
 
-import androidx.appcompat.widget.Toolbar;
-
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
 import java.util.List;
+// Classes needed to add the location engine
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineCallback;
+import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.location.LocationEngineRequest;
+import com.mapbox.android.core.location.LocationEngineResult;
+import java.lang.ref.WeakReference;
+// Classes needed to add the location component
+import com.mapbox.mapboxsdk.location.LocationComponent;
+import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
+import com.mapbox.mapboxsdk.location.modes.CameraMode;
+import com.mapbox.mapboxsdk.location.modes.RenderMode;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, LocationEngineListener, PermissionsListener, MapboxMap.OnMapClickListener {
+import com.google.android.material.navigation.NavigationView;
+
+
+
+
+public class MainActivity extends AppCompatActivity implements
+        OnMapReadyCallback, PermissionsListener{
+
 
     NavigationView nav;
     ActionBarDrawerToggle toggle;
     DrawerLayout drawerLayout;
-    private MapView mapView;
-    private MapboxMap map;
+
+    public MapboxMap mapboxMap;
+    public MapView mapView;
+
+
+    // Variables needed to handle location permissions
     private PermissionsManager permissionsManager;
+    // Variables needed to add the location engine
     private LocationEngine locationEngine;
-    private LocationLayerPlugin locationLayerPlugin;
-    private Location originLocation;
+    private long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
+    private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
+// Variables needed to listen to location updates
+    private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
+
+   // private Location originLocation;
 
 
+    @SuppressLint("MissingPermission")
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        // object or in the same activity which contains the mapview.
         Mapbox.getInstance(this, getString(R.string.access_token));
+
         setContentView(R.layout.activity_main);
-        mapView = (MapView) findViewById(R.id.mapview);
+        mapView = findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
         mapView.getMapAsync(this);
 
 
-        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        nav=(NavigationView)findViewById(R.id.nav_menu);
-        drawerLayout=(DrawerLayout)findViewById(R.id.drawer);
+        nav = (NavigationView) findViewById(R.id.nav_menu);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
 
-        toggle=new ActionBarDrawerToggle(this,drawerLayout,toolbar,R.string.open,R.string.close);
+        toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
@@ -75,125 +95,130 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
 
-
                 return false;
             }
         });
 
 
-//       Intent intent = new Intent(getApplicationContext(), ProfileActivity.class);
-//       Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-//       startActivity(intent);
-
     }
 
-    @Override
-    public void onMapReady(MapboxMap mapboxMap) {
-        map=mapboxMap;
-        enableLocation();
+    public void onMapReady(@NonNull final MapboxMap mapboxMap) {
+        this.mapboxMap = mapboxMap;
+
+        mapboxMap.setStyle(Style.TRAFFIC_NIGHT,
+                new Style.OnStyleLoaded() {
+                    @Override
+                    public void onStyleLoaded(@NonNull Style style) {
+
+                        enableLocationComponent(style);
+
+                    }
+                });
     }
 
-    //user build method in which we see if get location access is granted or not if not the we ask for permission
-    private void enableLocation() {
-        if (permissionsManager.areLocationPermissionsGranted(this)) {
-            //we need to set our location engine and location plugin
-            initializeLocationEngine();
-            initializeLocationLayer();
+
+
+
+    /**
+     * Initialize the Maps SDK's LocationComponent
+     */
+    @SuppressWarnings( {"MissingPermission"})
+    private void enableLocationComponent(@NonNull Style loadedMapStyle) {
+// Check if permissions are enabled and if not request
+        if (PermissionsManager.areLocationPermissionsGranted(this)) {
+
+// Get an instance of the component
+            LocationComponent locationComponent = mapboxMap.getLocationComponent();
+
+// Set the LocationComponent activation options
+            LocationComponentActivationOptions locationComponentActivationOptions =
+                    LocationComponentActivationOptions.builder(this, loadedMapStyle)
+                            .useDefaultLocationEngine(false)
+                            .build();
+
+// Activate with the LocationComponentActivationOptions object
+            locationComponent.activateLocationComponent(locationComponentActivationOptions);
+
+// Enable to make component visible
+            locationComponent.setLocationComponentEnabled(true);
+
+// Set the component's camera mode
+            locationComponent.setCameraMode(CameraMode.TRACKING);
+
+// Set the component's render mode
+            locationComponent.setRenderMode(RenderMode.COMPASS);
+
+            initLocationEngine();
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
         }
     }
 
-    @SuppressWarnings("MissingPermission")
-    private void initializeLocationEngine() {
 
-        locationEngine = new LocationEngineProvider(this).obtainBestLocationEngineAvailable();
-        locationEngine.setPriority(LocationEnginePriority.HIGH_ACCURACY);
-        locationEngine.activate();
+    /**
+     * Set up the LocationEngine and the parameters for querying the device's location
+     */
+    @SuppressLint("MissingPermission")
+    private void initLocationEngine() {
+        locationEngine = LocationEngineProvider.getBestLocationEngine(this);
 
-        Location lastLocation = locationEngine.getLastLocation();
-        if (lastLocation != null) {
-            originLocation = lastLocation;
-            setCameraPosition(lastLocation);
-        } else {
-            locationEngine.addLocationEngineListener(this);
-        }
-    }
+        LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
+                .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
+                .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
 
-    @SuppressWarnings("MissingPermission")
-    private void initializeLocationLayer() {
-        locationLayerPlugin = new LocationLayerPlugin(mapView, map, locationEngine);
-        locationLayerPlugin.setLocationLayerEnabled(true);
-        locationLayerPlugin.setCameraMode(CameraMode.TRACKING);
-        locationLayerPlugin.setRenderMode(RenderMode.NORMAL);
-    }
-
-    private void setCameraPosition(Location location) {
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 13.0));
+        locationEngine.requestLocationUpdates(request, callback, getMainLooper());
+        locationEngine.getLastLocation(callback);
     }
 
     @Override
-    @SuppressWarnings("MissingPermission")
-    public void onConnected() {
-        locationEngine.requestLocationUpdates();
-
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        permissionsManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
     }
 
     @Override
-    public void onLocationChanged(Location location) {
-
-        if(location!=null){
-            originLocation=location;
-            setCameraPosition(location);
-        }
-
+    public void onExplanationNeeded(List<String> permissionsToExplain) {
+        Toast.makeText(this, R.string.user_location_permission_explanation, Toast.LENGTH_LONG).show();
     }
 
-    @SuppressWarnings("MissingPermission")
-    protected void onStart() {
-
-        super.onStart();
-        if(locationEngine!=null)
-        {
-            locationEngine.removeLocationUpdates();
-            if(locationLayerPlugin!=null)
-            {
-                locationLayerPlugin.onStart();
+    @Override
+    public void onPermissionResult(boolean granted) {
+        if (granted) {
+            if (mapboxMap.getStyle() != null) {
+                enableLocationComponent(mapboxMap.getStyle());
             }
+        } else {
+            Toast.makeText(this, R.string.user_location_permission_not_granted, Toast.LENGTH_LONG).show();
+            finish();
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
         mapView.onStart();
     }
 
-    protected  void onResume()
-    {
+    @Override
+    protected void onResume() {
         super.onResume();
         mapView.onResume();
     }
 
-    protected  void onPause()
-    {
+    @Override
+    protected void onPause() {
         super.onPause();
         mapView.onPause();
     }
 
-    @SuppressWarnings("MissingPermission")
-    protected void onStop()
-    {
+    @Override
+    protected void onStop() {
         super.onStop();
-        if(locationEngine!=null)
-        {
-            locationEngine.removeLocationUpdates();
-        }
-        if(locationLayerPlugin!=null)
-        {
-            locationLayerPlugin.onStop();
-        }
         mapView.onStop();
     }
 
     @Override
-    protected void onSaveInstanceState(@NonNull Bundle outState) {
+    protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         mapView.onSaveInstanceState(outState);
     }
@@ -204,40 +229,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         mapView.onLowMemory();
     }
 
-    @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(locationEngine!=null)
-        {
-            locationEngine.deactivate();
+        //hide lines
+// Prevent leaks
+        if (locationEngine != null) {
+            locationEngine.removeLocationUpdates(callback);
         }
+      //  hide lines
         mapView.onDestroy();
     }
-
-    //when user denies the permission for the first time next time  you need to tell the user why granting permission to location is necessary
-    @Override
-    public void onExplanationNeeded(List<String> permissionsToExplain) {
-        //present toast or dialog
-    }
-
-    //after permission in ask based this method is called
-    @Override
-    public void onPermissionResult(boolean granted) {
-        if(granted){
-            enableLocation();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        permissionsManager.onRequestPermissionsResult(requestCode,permissions,grantResults);
-    }
-
-
-    @Override
-    public void onMapClick(@NonNull LatLng point) {
-
-    }
-
 
 }
