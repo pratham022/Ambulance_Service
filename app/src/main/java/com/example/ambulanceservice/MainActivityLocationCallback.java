@@ -15,6 +15,20 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
 
     private final WeakReference<MainActivity> activityWeakReference;
 
+    /**
+     * You'll need a class that implements LocationEngineCallback<LocationEngineResult>.
+     * Make sure the class requires Android system Activity as a constructor parameter.
+     * This class will serve as a "callback" and it's needed because a LocationEngine memory
+     * leak is possible if the activity/fragment directly implements the LocationEngineCallback<LocationEngineResult>.
+     * The WeakReference setup avoids the leak.
+     *
+     * When implementing the LocationEngineCallback interface, you are also required to override the onSuccess() and
+     * onFailure() methods. OnSuccess() runs whenever the Mapbox Core Libraries identifies a
+     * change in the device's location. result.getLastLocation() gives you a Location object that contains the latitude
+     * and longitude values. Now you can display the values in your app's UI, save it in memory, send it to your backend server,
+     * or use the device location information how you'd like.
+     * */
+
     MainActivityLocationCallback(MainActivity activity) {
         this.activityWeakReference = new WeakReference<>(activity);
     }
@@ -24,6 +38,7 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
         MainActivity activity = activityWeakReference.get();
 
         if (activity != null) {
+            //will give the latitude and longitude of the origin location
             Location location = result.getLastLocation();
 
             if (location == null) {
