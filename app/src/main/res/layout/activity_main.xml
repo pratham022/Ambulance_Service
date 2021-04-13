@@ -16,6 +16,21 @@
         mapbox:mapbox_cameraZoom="12"
          />
 
+    <Button
+        android:id="@+id/startButton"
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="656dp"
+        android:layout_marginEnd="16dp"
+        android:background="@color/md_grey_200"
+        android:enabled="false"
+        android:text="Start navigation"
+        android:textColor="@color/white"
+        mapbox:layout_constraintStart_toStartOf="parent"
+        mapbox:layout_constraintTop_toTopOf="parent" />
+
 
 
     <RelativeLayout
