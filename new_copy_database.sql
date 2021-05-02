@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Apr 05, 2021 at 08:19 PM
+-- Generation Time: May 02, 2021 at 08:31 PM
 -- Server version: 10.4.17-MariaDB
 -- PHP Version: 8.0.2
 
@@ -32,12 +32,19 @@ CREATE TABLE `cab` (
   `license_plate` varchar(50) NOT NULL,
   `manufacture_year` int(11) NOT NULL,
   `active` tinyint(1) NOT NULL,
-  `cab_lat` varchar(20) NOT NULL,
-  `cab_lng` varchar(20) NOT NULL,
+  `cab_lat` decimal(10,8) NOT NULL,
+  `cab_lng` decimal(10,8) NOT NULL,
   `car_model_id` int(11) DEFAULT NULL,
   `owner_id` int(11) DEFAULT NULL,
   `driver_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `cab`
+--
+
+INSERT INTO `cab` (`cab_id`, `license_plate`, `manufacture_year`, `active`, `cab_lat`, `cab_lng`, `car_model_id`, `owner_id`, `driver_id`) VALUES
+(1, 'MH-31-AB-5609', 2001, 0, '23.40000000', '69.80000000', 1, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -47,18 +54,26 @@ CREATE TABLE `cab` (
 
 CREATE TABLE `cab_ride` (
   `cab_ride_id` int(11) NOT NULL,
-  `src_lat` varchar(20) NOT NULL,
-  `src_long` varchar(20) NOT NULL,
-  `dest_lat` varchar(20) NOT NULL,
-  `dest_long` varchar(20) NOT NULL,
-  `gps_start_time` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  `gps_end_time` timestamp NULL DEFAULT NULL,
+  `src_lat` decimal(10,8) NOT NULL,
+  `src_long` decimal(10,8) NOT NULL,
+  `dest_lat` decimal(10,8) NOT NULL,
+  `dest_long` decimal(10,8) NOT NULL,
+  `gps_start_time` varchar(50) DEFAULT NULL,
+  `gps_end_time` varchar(50) DEFAULT NULL,
   `price` int(11) NOT NULL,
   `status` int(11) NOT NULL,
   `shift_id` int(11) DEFAULT NULL,
   `payment_id` int(11) DEFAULT NULL,
-  `cust_id` int(11) DEFAULT NULL
+  `cust_id` int(11) DEFAULT NULL,
+  `cab_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `cab_ride`
+--
+
+INSERT INTO `cab_ride` (`cab_ride_id`, `src_lat`, `src_long`, `dest_lat`, `dest_long`, `gps_start_time`, `gps_end_time`, `price`, `status`, `shift_id`, `payment_id`, `cust_id`, `cab_id`) VALUES
+(9, '12.45000000', '15.45000000', '45.54000000', '23.54000000', '05/02/2021 20:21:46', NULL, 75623, 2, NULL, 1, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -71,6 +86,13 @@ CREATE TABLE `car_model` (
   `model_name` varchar(100) NOT NULL,
   `model_description` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `car_model`
+--
+
+INSERT INTO `car_model` (`car_model_id`, `model_name`, `model_description`) VALUES
+(1, 'Maruti Suzuki', 'Four Seater AC Car 1000CC');
 
 -- --------------------------------------------------------
 
@@ -139,6 +161,13 @@ CREATE TABLE `owner` (
   `address` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+--
+-- Dumping data for table `owner`
+--
+
+INSERT INTO `owner` (`owner_id`, `name`, `email`, `phone`, `address`) VALUES
+(1, 'Rambhau Kathote', 'ram@gmail.com', '7777712345', 'Shree Siddhivinayak Manasvi, Ambegaon Bk, Pune');
+
 -- --------------------------------------------------------
 
 --
@@ -149,6 +178,14 @@ CREATE TABLE `payment` (
   `payment_id` int(11) NOT NULL,
   `type_name` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `payment`
+--
+
+INSERT INTO `payment` (`payment_id`, `type_name`) VALUES
+(1, 'Cash'),
+(2, 'PhonePay');
 
 -- --------------------------------------------------------
 
@@ -185,7 +222,8 @@ ALTER TABLE `cab_ride`
   ADD PRIMARY KEY (`cab_ride_id`),
   ADD KEY `cab_ride_ibfk_1` (`payment_id`),
   ADD KEY `cab_ride_ibfk_2` (`cust_id`),
-  ADD KEY `shift_id` (`shift_id`);
+  ADD KEY `shift_id` (`shift_id`),
+  ADD KEY `cab_id` (`cab_id`);
 
 --
 -- Indexes for table `car_model`
@@ -233,19 +271,19 @@ ALTER TABLE `shift`
 -- AUTO_INCREMENT for table `cab`
 --
 ALTER TABLE `cab`
-  MODIFY `cab_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cab_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `cab_ride`
 --
 ALTER TABLE `cab_ride`
-  MODIFY `cab_ride_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `cab_ride_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `car_model`
 --
 ALTER TABLE `car_model`
-  MODIFY `car_model_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `car_model_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `customer`
@@ -263,13 +301,13 @@ ALTER TABLE `driver`
 -- AUTO_INCREMENT for table `owner`
 --
 ALTER TABLE `owner`
-  MODIFY `owner_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `owner_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- AUTO_INCREMENT for table `shift`
@@ -295,7 +333,8 @@ ALTER TABLE `cab`
 ALTER TABLE `cab_ride`
   ADD CONSTRAINT `cab_ride_ibfk_1` FOREIGN KEY (`payment_id`) REFERENCES `payment` (`payment_id`) ON DELETE CASCADE,
   ADD CONSTRAINT `cab_ride_ibfk_2` FOREIGN KEY (`cust_id`) REFERENCES `customer` (`cust_id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `cab_ride_ibfk_3` FOREIGN KEY (`shift_id`) REFERENCES `shift` (`shift_id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `cab_ride_ibfk_3` FOREIGN KEY (`shift_id`) REFERENCES `shift` (`shift_id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `cab_ride_ibfk_4` FOREIGN KEY (`cab_id`) REFERENCES `cab` (`cab_id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `shift`
