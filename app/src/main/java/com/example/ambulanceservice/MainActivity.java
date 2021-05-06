@@ -154,6 +154,16 @@ The permission result is invoked once the user decides whether to allow or deny 
         });
 
 
+        Button openBottomSheet = findViewById(R.id.button_open_bottom_sheet);
+        openBottomSheet.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ExampleBottomSheetDialog bottomSheet = new ExampleBottomSheetDialog();
+                bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
+            }
+        });
+
+
     }
 
 
