@@ -1,14 +1,19 @@
 package com.example.ambulanceservice;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.graphics.BitmapFactory;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -100,6 +105,10 @@ public class MainActivity extends AppCompatActivity implements
     // variables needed to initialize navigation
     private Button button;
 
+    // source and destination edit texts
+    public static EditText txtSource;
+    public static EditText txtDestination;
+
 
 
     /**
@@ -173,6 +182,8 @@ The permission result is invoked once the user decides whether to allow or deny 
             }
         });
 
+        txtSource = findViewById(R.id.editTextSource);
+        txtDestination = findViewById(R.id.editTextDestination);
 
 
 
@@ -430,30 +441,34 @@ The permission result is invoked once the user decides whether to allow or deny 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
-        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
-
-
-        try {
-            List<android.location.Address> addresses = geocoder.getFromLocation(21.1458, 79.0882, 1);
-
-            if (addresses.size() > 0) {
-                Address fetchedAddress = addresses.get(0);
-                StringBuilder strAddress = new StringBuilder();
-                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
-                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
-                }
-
-                //txtLocationAddress.setText(strAddress.toString());
-                System.out.println(strAddress);
-
-            } else {
-               // txtLocationAddress.setText("Searching Current Address");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            //printToast("Could not get address..!");
-        }
+        getAddressFromLocation(point, this, new GeocoderHandler());
+//        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
+//        try {
+//            Log.e("Initial Hello0", "Inside try block...");
+//            List<android.location.Address> addresses = geocoder.getFromLocation(21.1458, 79.0882, 1);
+//
+//            Log.e("Heeelllo", addresses.toString());
+//            if (addresses.size() > 0) {
+//                Address fetchedAddress = addresses.get(0);
+//                StringBuilder strAddress = new StringBuilder();
+//                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+//                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
+//                }
+//
+//                //txtLocationAddress.setText(strAddress.toString());
+//                System.out.println(strAddress.toString());
+//                Log.e("Helllo", strAddress.toString());
+//
+//            } else {
+//               // txtLocationAddress.setText("Searching Current Address");
+//                Log.e("Hello2", "Searching...");
+//            }
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//            //printToast("Could not get address..!");
+//            Log.e("Helllo3", "Could not find address");
+//        }
 
 
 
@@ -474,4 +489,55 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
 
+    public static void getAddressFromLocation(LatLng point, final Context context, final Handler handler) {
+        Thread thread = new Thread() {
+            @Override public void run() {
+                Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+                String result = null;
+                try {
+                    List<Address> list = geocoder.getFromLocation(
+                            point.getLatitude(), point.getLongitude(), 1);
+                    if (list != null && list.size() > 0) {
+                        Address address = list.get(0);
+                        // sending back first address line and locality
+                        result = address.getAddressLine(0) + ", " + address.getLocality();
+                    }
+                } catch (IOException e) {
+                    Log.e("Helllo", "Impossible to connect to Geocoder", e);
+                } finally {
+                    Message msg = Message.obtain();
+                    msg.setTarget(handler);
+                    if (result != null) {
+                        msg.what = 1;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("address", result);
+                        msg.setData(bundle);
+                    } else
+                        msg.what = 0;
+                    msg.sendToTarget();
+                }
+            }
+        };
+        thread.start();
+    }
+
+
+
+}
+
+class GeocoderHandler extends Handler {
+    @Override
+    public void handleMessage(Message message) {
+        String result;
+        switch (message.what) {
+            case 1:
+                Bundle bundle = message.getData();
+                result = bundle.getString("address");
+                break;
+            default:
+                result = null;
+        }
+        // replace by what you need to do
+        MainActivity.txtDestination.setText(result);
+    }
 }

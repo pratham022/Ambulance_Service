@@ -54,7 +54,7 @@
 
 
     <EditText
-        android:id="@+id/editTextTextPersonName"
+        android:id="@+id/editTextSource"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:inputType="textPersonName"
@@ -63,10 +63,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white"
+        android:textColor="@color/black"
         android:layout_marginBottom="500dp"/>
 
     <EditText
-        android:id="@+id/editTextTextPersonName2"
+        android:id="@+id/editTextDestination"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:inputType="textPersonName"
@@ -75,6 +77,8 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/white"
+        android:textColor="@color/black"
         android:layout_marginBottom="380dp"/>
 
     <Button

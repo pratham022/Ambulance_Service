@@ -45,8 +45,9 @@ dependencies {
 
 
 
-    implementation 'com.google.android.gms:play-services-maps:11.0.4'
-    implementation 'com.google.android.gms:play-services-places:11.0.4'
+    implementation 'com.google.android.gms:play-services-base:17.1.0'
+
+    implementation 'com.google.android.gms:play-services-location:17.1.0'
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-core:3.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.6.7'
