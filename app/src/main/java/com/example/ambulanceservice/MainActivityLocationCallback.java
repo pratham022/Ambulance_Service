@@ -8,8 +8,22 @@ import androidx.annotation.NonNull;
 
 import com.mapbox.android.core.location.LocationEngineCallback;
 import com.mapbox.android.core.location.LocationEngineResult;
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+//import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.core.exceptions.ServicesException;
+import com.mapbox.geojson.Point;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import timber.log.Timber;
+
 
 public class MainActivityLocationCallback implements LocationEngineCallback<LocationEngineResult> {
 
@@ -41,9 +55,14 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
             //will give the latitude and longitude of the origin location
             Location location = result.getLastLocation();
 
+
+
             if (location == null) {
                 return;
             }
+        }
+
+
 
 // Create a Toast which displays the new location's coordinates
 //            Toast.makeText(activity, String.format(activity.getString(R.string.new_location),
@@ -55,7 +74,7 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
                 activity.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
             }
         }
-    }
+
 
     @Override
     public void onFailure(@NonNull Exception exception) {

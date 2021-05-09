@@ -2,7 +2,8 @@ package com.example.ambulanceservice;
 
 import android.annotation.SuppressLint;
 import android.graphics.BitmapFactory;
-import android.location.Location;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,40 +17,42 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.material.navigation.NavigationView;
+import com.mapbox.android.core.location.LocationEngine;
+import com.mapbox.android.core.location.LocationEngineProvider;
+import com.mapbox.android.core.location.LocationEngineRequest;
+import com.mapbox.android.core.permissions.PermissionsListener;
+import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
+import com.mapbox.api.geocoding.v5.GeocodingCriteria;
+import com.mapbox.api.geocoding.v5.MapboxGeocoding;
+import com.mapbox.api.geocoding.v5.models.CarmenFeature;
+import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
+import com.mapbox.core.exceptions.ServicesException;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.maps.MapView;
-import com.mapbox.mapboxsdk.maps.MapboxMap;
-import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
-import com.mapbox.mapboxsdk.maps.Style;
-
-import com.mapbox.android.core.permissions.PermissionsListener;
-import com.mapbox.android.core.permissions.PermissionsManager;
-import java.util.List;
-// Classes needed to add the location engine
-import com.mapbox.android.core.location.LocationEngine;
-import com.mapbox.android.core.location.LocationEngineCallback;
-import com.mapbox.android.core.location.LocationEngineProvider;
-import com.mapbox.android.core.location.LocationEngineRequest;
-import com.mapbox.android.core.location.LocationEngineResult;
-import java.lang.ref.WeakReference;
-// Classes needed to add the location component
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
 import com.mapbox.mapboxsdk.location.modes.CameraMode;
 import com.mapbox.mapboxsdk.location.modes.RenderMode;
-
-import com.google.android.material.navigation.NavigationView;
+import com.mapbox.mapboxsdk.maps.MapView;
+import com.mapbox.mapboxsdk.maps.MapboxMap;
+import com.mapbox.mapboxsdk.maps.OnMapReadyCallback;
+import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
+
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
 import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,6 +61,11 @@ import retrofit2.Response;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconAllowOverlap;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconIgnorePlacement;
 import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
+
+
+
+// Classes needed to add the location engine
+// Classes needed to add the location component
 
 
 public class MainActivity extends AppCompatActivity implements
@@ -91,6 +99,8 @@ public class MainActivity extends AppCompatActivity implements
 
     // variables needed to initialize navigation
     private Button button;
+
+
 
     /**
      * That's where the PermissionsManager class comes into play.
@@ -162,6 +172,8 @@ The permission result is invoked once the user decides whether to allow or deny 
                 bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
             }
         });
+
+
 
 
     }
@@ -417,6 +429,34 @@ The permission result is invoked once the user decides whether to allow or deny 
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
+
+        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
+
+
+        try {
+            List<android.location.Address> addresses = geocoder.getFromLocation(21.1458, 79.0882, 1);
+
+            if (addresses.size() > 0) {
+                Address fetchedAddress = addresses.get(0);
+                StringBuilder strAddress = new StringBuilder();
+                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
+                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
+                }
+
+                //txtLocationAddress.setText(strAddress.toString());
+                System.out.println(strAddress);
+
+            } else {
+               // txtLocationAddress.setText("Searching Current Address");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            //printToast("Could not get address..!");
+        }
+
+
+
         Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
@@ -431,4 +471,7 @@ The permission result is invoked once the user decides whether to allow or deny 
         button.setBackgroundResource(R.color.mapbox_blue);
         return true;
     }
+
+
+
 }

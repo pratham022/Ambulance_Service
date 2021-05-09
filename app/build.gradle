@@ -39,8 +39,14 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation 'com.sothree.slidinguppanel:library:3.4.0'
+    implementation ('com.mapbox.mapboxsdk:mapbox-android-geocoder:1.0.0@aar'){
+        transitive=true
+    }
 
 
+
+    implementation 'com.google.android.gms:play-services-maps:11.0.4'
+    implementation 'com.google.android.gms:play-services-places:11.0.4'
 
     implementation 'com.mapbox.mapboxsdk:mapbox-android-core:3.1.0'
     implementation 'com.mapbox.mapboxsdk:mapbox-android-sdk:8.6.7'
