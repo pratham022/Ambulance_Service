@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity implements
     // source and destination edit texts
     public static EditText txtSource;
     public static EditText txtDestination;
+    public Location source;
 
 
 
@@ -215,8 +216,14 @@ The permission result is invoked once the user decides whether to allow or deny 
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
 
-                        enableLocationComponent(style);
-                        addDestinationIconSymbolLayer(style);
+                        enableLocationComponent(style); ///if permission given set location
+                        addDestinationIconSymbolLayer(style); // give style to marker
+
+//                        LatLng pt=new LatLng(source.getLatitude(),source.getLongitude());
+//
+//                        getAddressFromLocation(pt,MainActivity.this,new GeocoderHandler());//reverse geocoding
+
+
 
                         mapboxMap.addOnMapClickListener(MainActivity.this);
                         button = findViewById(R.id.startButton);
@@ -288,6 +295,10 @@ The permission result is invoked once the user decides whether to allow or deny 
 // Get an instance of the component
             locationComponent = mapboxMap.getLocationComponent();
 
+
+
+
+
 // Set the LocationComponent activation options
             //Retrieve and activate the LocationComponent once the user has granted location permission and the map has fully loaded.
             LocationComponentActivationOptions locationComponentActivationOptions =
@@ -322,6 +333,7 @@ The permission result is invoked once the user decides whether to allow or deny 
             locationComponent.setRenderMode(RenderMode.COMPASS);
 
             initLocationEngine();
+
         } else {
             permissionsManager = new PermissionsManager(this);
             permissionsManager.requestLocationPermissions(this);
@@ -437,6 +449,40 @@ The permission result is invoked once the user decides whether to allow or deny 
         mapView.onDestroy();
     }
 
+    void getSource()  {
+
+        try{
+            String source=txtSource.getText().toString();
+
+            List<Address> foundGeocode = null;
+            /* find the addresses  by using getFromLocationName() method with the given address*/
+            foundGeocode = new Geocoder(this).getFromLocationName(source, 1);
+            foundGeocode.get(0).getLatitude(); //getting latitude
+            foundGeocode.get(0).getLongitude();//getting longitude
+        }catch(IOException e)
+        {
+            Log.d("MainActivity","got in error fetching source");
+        }
+    }
+
+    void getDestination(){
+
+        try{
+            String destination=txtDestination.getText().toString();
+
+            List<Address> foundGeocode = null;
+            /* find the addresses  by using getFromLocationName() method with the given address*/
+            foundGeocode = new Geocoder(this).getFromLocationName(destination, 1);
+            foundGeocode.get(0).getLatitude(); //getting latitude
+            foundGeocode.get(0).getLongitude();//getting longitude
+        }catch (IOException e)
+        {
+          Log.d("MainActivity","got in error fetching destination");
+        }
+
+
+    }
+
 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
@@ -538,6 +584,6 @@ class GeocoderHandler extends Handler {
                 result = null;
         }
         // replace by what you need to do
-        MainActivity.txtDestination.setText(result);
+        MainActivity.txtSource.setText(result);
     }
 }

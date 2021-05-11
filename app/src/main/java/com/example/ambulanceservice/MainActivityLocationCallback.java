@@ -15,6 +15,7 @@ import com.mapbox.api.geocoding.v5.models.CarmenFeature;
 import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
 import com.mapbox.core.exceptions.ServicesException;
 import com.mapbox.geojson.Point;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.lang.ref.WeakReference;
 import java.util.List;
@@ -55,6 +56,13 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
             //will give the latitude and longitude of the origin location
             Location location = result.getLastLocation();
 
+            activity.source=location;
+
+            Log.e("Hi Prathu",String.valueOf(activity.source.getLatitude())+" "+String.valueOf(activity.source.getLongitude()));
+
+            LatLng pt=new LatLng(activity.source.getLatitude(),activity.source.getLongitude());
+
+            activity.getAddressFromLocation(pt,activity,new GeocoderHandler());
 
 
             if (location == null) {
