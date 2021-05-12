@@ -108,7 +108,8 @@ public class MainActivity extends AppCompatActivity implements
     // source and destination edit texts
     public static EditText txtSource;
     public static EditText txtDestination;
-    public Location source;
+    public Location source,destination;
+
 
 
 
@@ -230,13 +231,16 @@ The permission result is invoked once the user decides whether to allow or deny 
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                boolean simulateRoute = true;
-                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-                                        .directionsRoute(currentRoute)
-                                        .shouldSimulateRoute(simulateRoute)
-                                        .build();
-                                // Call this method with Context from within an Activity
-                                NavigationLauncher.startNavigation(MainActivity.this, options);
+
+                               // String destination=txtDestination.getText().toString();
+                                getDestination();
+//                                boolean simulateRoute = true;
+//                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
+//                                        .directionsRoute(currentRoute)
+//                                        .shouldSimulateRoute(simulateRoute)
+//                                        .build();
+//                                // Call this method with Context from within an Activity
+//                                NavigationLauncher.startNavigation(MainActivity.this, options);
                             }
                         });
 
@@ -475,6 +479,12 @@ The permission result is invoked once the user decides whether to allow or deny 
             foundGeocode = new Geocoder(this).getFromLocationName(destination, 1);
             foundGeocode.get(0).getLatitude(); //getting latitude
             foundGeocode.get(0).getLongitude();//getting longitude
+            Log.e("Destination location is",String.valueOf(foundGeocode.get(0).getLatitude())+" "+String.valueOf(foundGeocode.get(0).getLongitude()));
+//            Point destinationPoint=Point.fromLngLat(foundGeocode.get(0).getLatitude(),foundGeocode.get(0).getLongitude());
+//            GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
+//            if (source != null) {
+//                source.setGeoJson(Feature.fromGeometry(destinationPoint));
+//            }
         }catch (IOException e)
         {
           Log.d("MainActivity","got in error fetching destination");
@@ -487,7 +497,7 @@ The permission result is invoked once the user decides whether to allow or deny 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
-        getAddressFromLocation(point, this, new GeocoderHandler());
+        getAddressFromLocation(point,MainActivity.this,new GeocoderHandler());
 //        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
 //        try {
 //            Log.e("Initial Hello0", "Inside try block...");
@@ -517,17 +527,21 @@ The permission result is invoked once the user decides whether to allow or deny 
 //        }
 
 
-
+        //
         Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
+
+
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
         if (source != null) {
             source.setGeoJson(Feature.fromGeometry(destinationPoint));
         }
 
-        getRoute(originPoint, destinationPoint);
+
+
+        //getRoute(originPoint, destinationPoint);
         button.setEnabled(true);
         button.setBackgroundResource(R.color.mapbox_blue);
         return true;
