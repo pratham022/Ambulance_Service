@@ -62,7 +62,7 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
 
             LatLng pt=new LatLng(activity.source.getLatitude(),activity.source.getLongitude());
 
-            activity.getAddressFromLocation(pt,activity,new GeocoderHandler());
+           // activity.getAddressFromLocation(pt,activity,new GeocoderHandler());
 
 
             if (location == null) {

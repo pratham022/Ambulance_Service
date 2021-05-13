@@ -2,7 +2,10 @@ package com.example.ambulanceservice;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -16,11 +19,15 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+
 
 import com.google.android.material.navigation.NavigationView;
 import com.mapbox.android.core.location.LocationEngine;
@@ -30,14 +37,13 @@ import com.mapbox.android.core.permissions.PermissionsListener;
 import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
-import com.mapbox.api.geocoding.v5.GeocodingCriteria;
-import com.mapbox.api.geocoding.v5.MapboxGeocoding;
-import com.mapbox.api.geocoding.v5.models.CarmenFeature;
-import com.mapbox.api.geocoding.v5.models.GeocodingResponse;
-import com.mapbox.core.exceptions.ServicesException;
 import com.mapbox.geojson.Feature;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
+import com.mapbox.mapboxsdk.annotations.Icon;
+import com.mapbox.mapboxsdk.annotations.IconFactory;
+import com.mapbox.mapboxsdk.annotations.Marker;
+import com.mapbox.mapboxsdk.annotations.MarkerOptions;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -50,8 +56,6 @@ import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.style.layers.SymbolLayer;
 import com.mapbox.mapboxsdk.style.sources.GeoJsonSource;
 
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncher;
-import com.mapbox.services.android.navigation.ui.v5.NavigationLauncherOptions;
 import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
@@ -108,7 +112,9 @@ public class MainActivity extends AppCompatActivity implements
     // source and destination edit texts
     public static EditText txtSource;
     public static EditText txtDestination;
-    public Location source,destination;
+    public Location source;
+    public Point source_pt,destination_pt;
+    Marker destination_mk=null;
 
 
 
@@ -207,6 +213,22 @@ The permission result is invoked once the user decides whether to allow or deny 
         loadedMapStyle.addLayer(destinationSymbolLayer);
     }
 
+    private void addSourceIconSymbolLayer(@NonNull Style loadedMapStyle) {
+        loadedMapStyle.addImage("destination-icon-id",
+                BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
+        GeoJsonSource geoJsonSource = new GeoJsonSource("destination-id");
+        loadedMapStyle.addSource(geoJsonSource);
+        SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-id");
+        destinationSymbolLayer.withProperties(
+                iconImage("destination-icon-id"),
+                iconAllowOverlap(true),
+                iconIgnorePlacement(true)
+        );
+        loadedMapStyle.addLayer(destinationSymbolLayer);
+    }
+
+
+
 
     public void onMapReady(@NonNull final MapboxMap mapboxMap) {
         this.mapboxMap = mapboxMap; //when map get's ready it passes mapboxMap instance
@@ -219,6 +241,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
                         enableLocationComponent(style); ///if permission given set location
                         addDestinationIconSymbolLayer(style); // give style to marker
+                       // addSourceIconSymbolLayer(style);
 
 //                        LatLng pt=new LatLng(source.getLatitude(),source.getLongitude());
 //
@@ -479,12 +502,18 @@ The permission result is invoked once the user decides whether to allow or deny 
             foundGeocode = new Geocoder(this).getFromLocationName(destination, 1);
             foundGeocode.get(0).getLatitude(); //getting latitude
             foundGeocode.get(0).getLongitude();//getting longitude
+            destination_pt=Point.fromLngLat(foundGeocode.get(0).getLongitude(),foundGeocode.get(0).getLatitude());
             Log.e("Destination location is",String.valueOf(foundGeocode.get(0).getLatitude())+" "+String.valueOf(foundGeocode.get(0).getLongitude()));
-//            Point destinationPoint=Point.fromLngLat(foundGeocode.get(0).getLatitude(),foundGeocode.get(0).getLongitude());
-//            GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
-//            if (source != null) {
-//                source.setGeoJson(Feature.fromGeometry(destinationPoint));
-//            }
+            if(destination_mk==null)
+            {
+                destination_mk=mapboxMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(foundGeocode.get(0).getLatitude(), foundGeocode.get(0).getLongitude()))
+                        .title("hospital"));
+            }else
+            {
+                destination_mk.setPosition(new LatLng(foundGeocode.get(0).getLatitude(), foundGeocode.get(0).getLongitude()));
+            }
+            getRoute(source_pt,destination_pt);
         }catch (IOException e)
         {
           Log.d("MainActivity","got in error fetching destination");
@@ -492,6 +521,20 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
     }
+
+//    private Icon bitmapDescriptorFromVector(Context context, @DrawableRes  int vectorDrawableResourceId) {
+//        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_baseline_destination);
+//        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
+//        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
+//        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
+//        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+//        Canvas canvas = new Canvas(bitmap);
+//        background.draw(canvas);
+//        vectorDrawable.draw(canvas);
+//        return BitmapDescriptorFactory.fromBitmap(bitmap);
+//    }
+
+
 
 
     @Override
@@ -532,7 +575,7 @@ The permission result is invoked once the user decides whether to allow or deny 
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
 
-
+        source_pt=destinationPoint;
 
         GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
         if (source != null) {
