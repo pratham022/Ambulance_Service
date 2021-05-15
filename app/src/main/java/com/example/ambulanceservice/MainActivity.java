@@ -78,7 +78,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 
 public class MainActivity extends AppCompatActivity implements
-        OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener {
+        OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener,AsyncResponseRideDetails {
 
 
     NavigationView nav;
@@ -213,19 +213,6 @@ The permission result is invoked once the user decides whether to allow or deny 
         loadedMapStyle.addLayer(destinationSymbolLayer);
     }
 
-    private void addSourceIconSymbolLayer(@NonNull Style loadedMapStyle) {
-        loadedMapStyle.addImage("destination-icon-id",
-                BitmapFactory.decodeResource(this.getResources(), R.drawable.mapbox_marker_icon_default));
-        GeoJsonSource geoJsonSource = new GeoJsonSource("destination-id");
-        loadedMapStyle.addSource(geoJsonSource);
-        SymbolLayer destinationSymbolLayer = new SymbolLayer("destination-symbol-layer-id", "destination-id");
-        destinationSymbolLayer.withProperties(
-                iconImage("destination-icon-id"),
-                iconAllowOverlap(true),
-                iconIgnorePlacement(true)
-        );
-        loadedMapStyle.addLayer(destinationSymbolLayer);
-    }
 
 
 
@@ -249,6 +236,8 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
 
+
+
                         mapboxMap.addOnMapClickListener(MainActivity.this);
                         button = findViewById(R.id.startButton);
                         button.setOnClickListener(new View.OnClickListener() {
@@ -264,6 +253,12 @@ The permission result is invoked once the user decides whether to allow or deny 
 //                                        .build();
 //                                // Call this method with Context from within an Activity
 //                                NavigationLauncher.startNavigation(MainActivity.this, options);
+
+                                BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
+                                backgroundBookCab.delegate=MainActivity.this;
+                                backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),String.valueOf(7),String.valueOf(1));
+
+
                             }
                         });
 
@@ -522,17 +517,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
     }
 
-//    private Icon bitmapDescriptorFromVector(Context context, @DrawableRes  int vectorDrawableResourceId) {
-//        Drawable background = ContextCompat.getDrawable(context, R.drawable.ic_baseline_destination);
-//        background.setBounds(0, 0, background.getIntrinsicWidth(), background.getIntrinsicHeight());
-//        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorDrawableResourceId);
-//        vectorDrawable.setBounds(40, 20, vectorDrawable.getIntrinsicWidth() + 40, vectorDrawable.getIntrinsicHeight() + 20);
-//        Bitmap bitmap = Bitmap.createBitmap(background.getIntrinsicWidth(), background.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
-//        Canvas canvas = new Canvas(bitmap);
-//        background.draw(canvas);
-//        vectorDrawable.draw(canvas);
-//        return BitmapDescriptorFactory.fromBitmap(bitmap);
-//    }
+
 
 
 
@@ -541,33 +526,7 @@ The permission result is invoked once the user decides whether to allow or deny 
     public boolean onMapClick(@NonNull LatLng point) {
 
         getAddressFromLocation(point,MainActivity.this,new GeocoderHandler());
-//        Geocoder geocoder = new Geocoder(this, Locale.ENGLISH);
-//        try {
-//            Log.e("Initial Hello0", "Inside try block...");
-//            List<android.location.Address> addresses = geocoder.getFromLocation(21.1458, 79.0882, 1);
-//
-//            Log.e("Heeelllo", addresses.toString());
-//            if (addresses.size() > 0) {
-//                Address fetchedAddress = addresses.get(0);
-//                StringBuilder strAddress = new StringBuilder();
-//                for (int i = 0; i < fetchedAddress.getMaxAddressLineIndex(); i++) {
-//                    strAddress.append(fetchedAddress.getAddressLine(i)).append(" ");
-//                }
-//
-//                //txtLocationAddress.setText(strAddress.toString());
-//                System.out.println(strAddress.toString());
-//                Log.e("Helllo", strAddress.toString());
-//
-//            } else {
-//               // txtLocationAddress.setText("Searching Current Address");
-//                Log.e("Hello2", "Searching...");
-//            }
-//
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//            //printToast("Could not get address..!");
-//            Log.e("Helllo3", "Could not find address");
-//        }
+
 
 
         //
@@ -625,7 +584,10 @@ The permission result is invoked once the user decides whether to allow or deny 
     }
 
 
-
+    @Override
+    public void processStringFinish(Ride_Details s) {
+            Log.e("Cab Booked","Ride booked");
+    }
 }
 
 class GeocoderHandler extends Handler {

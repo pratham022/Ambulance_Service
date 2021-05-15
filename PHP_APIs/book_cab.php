@@ -9,12 +9,19 @@ if(!$con) {
 	die(json_encode($response));
 }
 else {
-	$src_lat = $_POST['src_lat'];
-	$src_lng = $_POST['src_lng'];
-	$dest_lat = $_POST['dest_lat'];
-	$dest_lng = $_POST['dest_lng'];
-	$user_id = $_POST['user_id'];
-	$payment_id = $_POST['payment_id'];
+	$src_lat1 = $_POST['src_lat'];
+	$src_lng1 = $_POST['src_lng'];
+	$dest_lat1 = $_POST['dest_lat'];
+	$dest_lng1 = $_POST['dest_lng'];
+	$user_id1= $_POST['user_id'];
+	$payment_id1 = $_POST['payment_id'];
+
+	$src_lat=(double)$src_lat1;
+	$src_lng=(double)$src_lng1;
+	$dest_lat=(double)$dest_lat1;
+	$dest_lng=(double)$dest_lng1;
+	$user_id=(int)$user_id1;
+	$payment_id=(int)$payment_id1;
 
 	$getUserNamePhoneQuery = "SELECT name, phone FROM customer WHERE cust_id='$user_id'";
 	$userNamePhone = mysqli_query($con, $getUserNamePhoneQuery);

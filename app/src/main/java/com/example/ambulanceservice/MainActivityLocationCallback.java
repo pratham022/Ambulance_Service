@@ -56,6 +56,8 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
             //will give the latitude and longitude of the origin location
             Location location = result.getLastLocation();
 
+          //  Log.e("Hi tanaya",location.toString());
+
             activity.source=location;
 
             Log.e("Hi Prathu",String.valueOf(activity.source.getLatitude())+" "+String.valueOf(activity.source.getLongitude()));
@@ -79,6 +81,8 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
 
 // Pass the new location to the Maps SDK's LocationComponent
             if (activity.mapboxMap != null && result.getLastLocation() != null) {
+
+
                 activity.mapboxMap.getLocationComponent().forceLocationUpdate(result.getLastLocation());
             }
         }
