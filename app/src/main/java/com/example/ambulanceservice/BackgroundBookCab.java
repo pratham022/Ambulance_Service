@@ -18,6 +18,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+import java.text.*;
+
 public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
 
     Context context;
@@ -42,10 +44,17 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
 
         String login_url="http://10.0.2.2/book_cab.php";
 
-        double src_lat=Double.valueOf(strings[0]);
-        double src_lng=Double.valueOf(strings[1]);
-        double dest_lat=Double.valueOf(strings[2]);
-        double dest_lng=Double.valueOf(strings[3]);
+        double src_lat1=Double.valueOf(strings[0]);
+        double src_lng1=Double.valueOf(strings[1]);
+        double dest_lat1=Double.valueOf(strings[2]);
+        double dest_lng1=Double.valueOf(strings[3]);
+
+        DecimalFormat df = new DecimalFormat("#.####");
+        double src_lat = Double.parseDouble(df.format(src_lat1));
+        double src_lng = Double.parseDouble(df.format(src_lng1));
+        double dest_lat = Double.parseDouble(df.format(dest_lat1));
+        double dest_lng = Double.parseDouble(df.format(dest_lng1));
+
 
         int user_id=Integer.valueOf(strings[4]);
         int payment_id=Integer.valueOf(strings[5]);
@@ -88,6 +97,8 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
 
             JSONObject response_data = new JSONObject(result);
 
+            Log.e("Result data", response_data.toString());
+
             if (response_data.getString("status").equals("1")) {
                 String ride_id = response_data.getJSONObject("data").getString("ride_id");
                 String cab_lat = response_data.getJSONObject("data").getString("cab_lat");
@@ -116,6 +127,7 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
 
 
             } else{
+
                 return new Ride_Details();
             }
 

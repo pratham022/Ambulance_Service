@@ -254,9 +254,9 @@ The permission result is invoked once the user decides whether to allow or deny 
 //                                // Call this method with Context from within an Activity
 //                                NavigationLauncher.startNavigation(MainActivity.this, options);
 
-                                BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
-                                backgroundBookCab.delegate=MainActivity.this;
-                                backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),String.valueOf(7),String.valueOf(1));
+//                                BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
+//                                backgroundBookCab.delegate=MainActivity.this;
+//                                backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),String.valueOf(7),String.valueOf(1));
 
 
                             }
@@ -295,6 +295,13 @@ The permission result is invoked once the user decides whether to allow or deny 
                             navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
                         }
                         navigationMapRoute.addRoute(currentRoute);
+
+
+                        // book cab
+                        BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
+                        backgroundBookCab.delegate=MainActivity.this;
+                        backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),String.valueOf(7),String.valueOf(1));
+
                     }
 
                     @Override
@@ -509,6 +516,7 @@ The permission result is invoked once the user decides whether to allow or deny 
                 destination_mk.setPosition(new LatLng(foundGeocode.get(0).getLatitude(), foundGeocode.get(0).getLongitude()));
             }
             getRoute(source_pt,destination_pt);
+
         }catch (IOException e)
         {
           Log.d("MainActivity","got in error fetching destination");
