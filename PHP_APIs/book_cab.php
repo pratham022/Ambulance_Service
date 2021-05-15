@@ -16,12 +16,14 @@ else {
 	$user_id1= $_POST['user_id'];
 	$payment_id1 = $_POST['payment_id'];
 
-	$src_lat=(double)$src_lat1;
-	$src_lng=(double)$src_lng1;
-	$dest_lat=(double)$dest_lat1;
-	$dest_lng=(double)$dest_lng1;
+	$src_lat=round((double)$src_lat1, 4);
+	$src_lng=round((double)$src_lng1, 4);
+	$dest_lat=round((double)$dest_lat1, 4);
+	$dest_lng=round((double)$dest_lng1, 4);
 	$user_id=(int)$user_id1;
 	$payment_id=(int)$payment_id1;
+
+
 
 	$getUserNamePhoneQuery = "SELECT name, phone FROM customer WHERE cust_id='$user_id'";
 	$userNamePhone = mysqli_query($con, $getUserNamePhoneQuery);
@@ -118,7 +120,11 @@ else {
 	    {
 	        $response = array(
 	            "status" => "0",
-	            "data" => "Unable to book ride 2"
+	            "data" => "Unable to book ride 2",
+	           	"src_lat" => $src_lat,
+	            "src_lng" => $src_lng,
+	            "dest_lat" => $dest_lat,
+	            "dest_lng" => $dest_lng,
 	        );
 	        die(json_encode($response));
 	    }
