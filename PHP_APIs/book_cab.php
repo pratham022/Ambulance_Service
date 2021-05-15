@@ -16,12 +16,12 @@ else {
 	$user_id1= $_POST['user_id'];
 	$payment_id1 = $_POST['payment_id'];
 
-	$src_lat=round((double)$src_lat1, 4);
-	$src_lng=round((double)$src_lng1, 4);
-	$dest_lat=round((double)$dest_lat1, 4);
-	$dest_lng=round((double)$dest_lng1, 4);
-	$user_id=(int)$user_id1;
-	$payment_id=(int)$payment_id1;
+	$src_lat=(float)($src_lat1);
+	$src_lng=(float)($src_lng1);
+	$dest_lat=(float)($dest_lat1);
+	$dest_lng=(float)($dest_lng1);
+	$user_id=intval($user_id1);
+	$payment_id=intval($payment_id1);
 
 
 
@@ -101,7 +101,13 @@ else {
 	                    "cab_no" => $r['cab_id'],
 	                    "fare" => $fare,
 	                    "model_name" => $model_name,
-	                    "model_description" => $model_description
+	                    "model_description" => $model_description,
+						"src_lat" => $src_lat,
+	            "src_lng" => $src_lng,
+	            "dest_lat" => $dest_lat,
+	            "dest_lng" => $dest_lng,
+				"user_id"=>$user_id,
+				"payment_id"=>$payment_id,
 
 	                )
 	            );
@@ -125,6 +131,9 @@ else {
 	            "src_lng" => $src_lng,
 	            "dest_lat" => $dest_lat,
 	            "dest_lng" => $dest_lng,
+				"user_id"=>$user_id,
+				"payment_id"=>$payment_id,
+				
 	        );
 	        die(json_encode($response));
 	    }
