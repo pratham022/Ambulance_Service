@@ -594,7 +594,10 @@ The permission result is invoked once the user decides whether to allow or deny 
 
     @Override
     public void processStringFinish(Ride_Details s) {
-            Log.e("Cab Booked","Ride booked");
+
+        Log.e("Cab Booked","Ride booked");
+
+        // do here
     }
 }
 

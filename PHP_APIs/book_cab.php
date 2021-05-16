@@ -32,18 +32,20 @@ else {
 	$customer_phone = $customer['phone'];
 
 
-	$getNearbyCabs = "SELECT driver_id, cab_id, license_plate, cab_lat, cab_lng, car_model_id FROM cab WHERE active=0 ORDER BY 
-						((cab_lat-$src_lat)*(cab_lat-$src_lat) + (cab_lng-$src_lng)*(cab_lng-$src_lng)) LIMIT 1";
+	$getNearbyCabs = "SELECT driver_id, cab_id, license_plate, CAST(CAST(cab_lat AS float) AS decimal(10, 8)), CAST(CAST(cab_lng AS float) AS decimal(10, 8)), car_model_id FROM cab WHERE active=0 ORDER BY 
+						((CAST(CAST(cab_lat AS float) AS decimal(10, 8))-$src_lat)*(CAST(CAST(cab_lat AS float) AS decimal(10, 8))-$src_lat) + (CAST(CAST(cab_lng AS float) AS decimal(10, 8))-$src_lng)*(CAST(CAST(cab_lng AS float) AS decimal(10, 8))-$src_lng)) LIMIT 1";
 
 	$result = mysqli_query($con, $getNearbyCabs);
 	if($result) {
 		$r = mysqli_fetch_assoc($result);
 	    $cab_id = $r['cab_id'];
 	    $license_plate = $r['license_plate'];
-	    $cab_lat = $r['cab_lat'];
-	    $cab_lng = $r['cab_lng'];
 	    $cab_model_id = $r['car_model_id'];
 	    $driver_id = $r['driver_id'];
+
+	    $getCabLatLng = "SELECT cab_lat, cab_lng from cab where cab_id='$cab_id'";
+	    $result7 = mysqli_query($con, $getCabLatLng);
+	    $r7 = mysqli_fetch_assoc($result7);
 
 	    
 	    $fare = sqrt(($dest_lat - $src_lat) * ($dest_lat - $src_lat) + ($dest_lng - $src_lng) * ($dest_lng - $src_lng)) * 111 * 20;
@@ -63,7 +65,7 @@ else {
 	    // 2 => cab ride completed successfully
 
 	    $book_ride_query = "INSERT INTO cab_ride (cust_id, src_lat, src_long, dest_lat, dest_long, price, status, payment_id, gps_start_time, cab_id) 
-	    					values ('$user_id', '$src_lat', '$src_lng', '$dest_lat', '$dest_lng', '$fare', 0, '$payment_id', '$booked_at', '$cab_id')";
+	    					values ('$user_id', '$src_lat1', '$src_lng1', '$dest_lat1', '$dest_lng1', '$fare', 0, '$payment_id', '$booked_at', '$cab_id')";
 
 	    $change_on_trip_query = "UPDATE cab SET active=1 WHERE cab_id='$cab_id'";
 	    $book_ride_result = mysqli_query($con, $book_ride_query);
@@ -93,8 +95,8 @@ else {
 	                "status" => "1",
 	                "data" => array(
 	                    "ride_id" => $ride_id,
-	                    "cab_lat" => $r['cab_lat'],
-	                    "cab_lng" => $r['cab_lng'],
+	                    "cab_lat" => $r7['cab_lat'],
+	                    "cab_lng" => $r7['cab_lng'],
 	                    "cab_id" => $r['cab_id'],
 	                    "driver_name" => $r4['first_name'] . " " .$r4['last_name'],
 	                    "driver_phone" => $r4['phone'],
