@@ -111,7 +111,7 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
                 String model_name=response_data.getJSONObject("data").getString("model_name");
                 String model_description=response_data.getJSONObject("data").getString("model_description");
 
-                ride_details=new Ride_Details(Integer.valueOf(ride_id),Double.valueOf(cab_lat),Double.valueOf(cab_lng),Integer.valueOf(cab_id),driver_name,driver_phone,Integer.valueOf(cab_no),Integer.valueOf(fare),model_name,model_description);
+                ride_details=new Ride_Details(Integer.valueOf(ride_id),Double.valueOf(cab_lat),Double.valueOf(cab_lng),Integer.valueOf(cab_id),driver_name,driver_phone,cab_no,Integer.valueOf(fare),model_name,model_description);
                 Log.e("ride_id",ride_id);
                 Log.e("cab_lat",cab_lat);
                 Log.e("cab_lng",cab_lng);

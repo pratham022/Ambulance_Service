@@ -8,7 +8,7 @@ public class Ride_Details {
     public int cab_id;
     public String driver_name;
     public String driver_phone;
-    public int cab_no;
+    public String cab_no;
     public int cab_fare;
     public String model_name;
     public String model_description;
@@ -17,7 +17,7 @@ public class Ride_Details {
 
     }
 
-    Ride_Details(int ride_id,double cab_lat,double cab_lng,int cab_id,String driver_name,String driver_phone,int cab_no,int cab_fare,String model_name,String model_description)
+    Ride_Details(int ride_id,double cab_lat,double cab_lng,int cab_id,String driver_name,String driver_phone,String cab_no,int cab_fare,String model_name,String model_description)
     {
         this.ride_id=ride_id;
         this.cab_lat=cab_lat;
@@ -39,7 +39,7 @@ public class Ride_Details {
         return ride_id;
     }
 
-    int getCab_no()
+    String getCab_no()
     {
         return cab_no;
     }

@@ -78,7 +78,7 @@ import static com.mapbox.mapboxsdk.style.layers.PropertyFactory.iconImage;
 
 
 public class MainActivity extends AppCompatActivity implements
-        OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener,AsyncResponseRideDetails {
+        OnMapReadyCallback, PermissionsListener, MapboxMap.OnMapClickListener,AsyncResponseRideDetails, ExampleBottomSheetDialog.BottomSheetListener {
 
 
     NavigationView nav;
@@ -115,6 +115,9 @@ public class MainActivity extends AppCompatActivity implements
     public Location source;
     public Point source_pt,destination_pt;
     Marker destination_mk=null;
+
+    private String rideId = "";
+    private String cabId = "";
 
 
 
@@ -192,6 +195,10 @@ The permission result is invoked once the user decides whether to allow or deny 
 
         txtSource = findViewById(R.id.editTextSource);
         txtDestination = findViewById(R.id.editTextDestination);
+
+
+        ExampleBottomSheetDialog bottomSheet = new ExampleBottomSheetDialog();
+        bottomSheet.show(getSupportFragmentManager(), "exampleBottomSheet");
 
 
 
@@ -598,6 +605,29 @@ The permission result is invoked once the user decides whether to allow or deny 
         Log.e("Cab Booked","Ride booked");
 
         // do here
+        ExampleBottomSheetDialog.driverName += s.driver_name;
+        ExampleBottomSheetDialog.phone += s.driver_phone;
+        ExampleBottomSheetDialog.cabNo += String.valueOf(s.cab_no);
+        ExampleBottomSheetDialog.cabFare += String.valueOf(s.cab_fare);
+        ExampleBottomSheetDialog.modelName += s.model_name;
+
+        rideId = String.valueOf(s.ride_id);
+        cabId = String.valueOf(s.cab_id);
+
+        ExampleBottomSheetDialog.updateDetails();
+    }
+
+    @Override
+    public void onButtonClicked(String text) {
+        if(text.equals("Button 2 clicked")) {
+            // cancel ride button clicked
+
+            Log.e("Hello", "Cancel Cab executes");
+            // cancel cab
+            BackgroundCancelCab backgroundCancelCab=new BackgroundCancelCab(getApplicationContext());
+            backgroundCancelCab.execute(rideId, cabId);
+
+        }
     }
 }
 

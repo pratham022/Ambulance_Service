@@ -99,8 +99,10 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
     @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
+        Log.e("Herere", "On post cancel execute");
         if(s.equals("Booking canceled"))
         {
+            ExampleBottomSheetDialog.resetDetails();
             alertDialog=new AlertDialog.Builder(context).create();
             alertDialog.setTitle("Booking canceled successfully");
         }
