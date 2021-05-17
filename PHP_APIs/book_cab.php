@@ -100,7 +100,7 @@ else {
 	                    "cab_id" => $r['cab_id'],
 	                    "driver_name" => $r4['first_name'] . " " .$r4['last_name'],
 	                    "driver_phone" => $r4['phone'],
-	                    "cab_no" => $r['cab_id'],
+	                    "cab_no" => $r['license_plate'],
 	                    "fare" => $fare,
 	                    "model_name" => $model_name,
 	                    "model_description" => $model_description,
