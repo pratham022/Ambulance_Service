@@ -2,6 +2,7 @@ package com.example.ambulanceservice;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -9,6 +10,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,6 +20,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.content.Intent;
 
 import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
@@ -178,6 +181,17 @@ The permission result is invoked once the user decides whether to allow or deny 
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
+               // Log.e("In navigation Listner","Here");
+
+                if(item.getTitle().equals("Profile"))
+                {
+                  //  Log.e("Open Profile","opening");
+                    openProfile();
+                }
+                else if(item.getTitle().equals("Call"))
+                {
+                    openCall();
+                }
 
                 return false;
             }
@@ -202,6 +216,19 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
 
+    }
+
+    private void openProfile()
+    {
+        Intent intent=new Intent(this,ProfileActivity.class);
+        startActivity(intent);
+    }
+
+    private void openCall()
+    {
+        Intent intent = new Intent(Intent.ACTION_DIAL);
+        intent.setData(Uri.parse("tel:0123456789"));
+        startActivity(intent);
     }
 
 

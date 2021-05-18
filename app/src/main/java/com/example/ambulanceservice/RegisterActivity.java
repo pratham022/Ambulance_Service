@@ -160,6 +160,7 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
                 SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("phone", phone);
+                myEdit.putString("name",name);
                 myEdit.apply();
 
                 Intent i = new Intent(this, MainActivity.class);

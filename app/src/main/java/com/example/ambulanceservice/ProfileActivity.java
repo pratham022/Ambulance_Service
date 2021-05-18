@@ -2,6 +2,7 @@ package com.example.ambulanceservice;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.TextView;
@@ -27,11 +28,15 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponse{
         setContentView(R.layout.activity_profile);
 
 
-        System.out.println("here in profile");
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        if(sh.getString("phone", null) != null){
+            TextView phone=(TextView)findViewById(R.id.phone);
+            phone.setText(sh.getString("phone",null));
+        }
        // fetchData();
-        BackgroundProfileWorker backgroundProfileWorker=new BackgroundProfileWorker(this);
-        backgroundProfileWorker.delegate=this;
-        backgroundProfileWorker.execute("tanayawankar58@gmail.com");
+//        BackgroundProfileWorker backgroundProfileWorker=new BackgroundProfileWorker(this);
+//        backgroundProfileWorker.delegate=this;
+//        backgroundProfileWorker.execute("tanayawankar58@gmail.com");
 
     }
 
