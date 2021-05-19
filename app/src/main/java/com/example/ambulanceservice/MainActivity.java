@@ -185,7 +185,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
                 if(item.getTitle().equals("Profile"))
                 {
-                  //  Log.e("Open Profile","opening");
+                  // Log.e("Open Profile","opening");
                     openProfile();
                 }
                 else if(item.getTitle().equals("Call"))
