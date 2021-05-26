@@ -35,7 +35,8 @@ public class BackgroundLoginWorker extends AsyncTask<String, Void, String> {
         String phone = params[0];
         String pass = params[1];
         String type = params[2];
-        String login_url = "http://10.0.2.2/login.php/";
+        Log.e("Params", phone+pass+type);
+        String login_url = "https://quickcare.000webhostapp.com/login.php";
         try {
             URL url = new URL(login_url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
@@ -53,11 +54,13 @@ public class BackgroundLoginWorker extends AsyncTask<String, Void, String> {
             bufferedWriter.close();
             outputStream.close();
 
+            Log.e("Hello", "here");
             InputStream inputStream = httpURLConnection.getInputStream();
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
             String result = "";
             String line = "";
             while ((line = bufferedReader.readLine()) != null) {
+                Log.e("Hello", "Loop");
                 result += line;
             }
             bufferedReader.close();

@@ -42,7 +42,7 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
     @Override
     protected Ride_Details doInBackground(String... strings) {
 
-        String login_url="http://10.0.2.2/book_cab.php";
+        String login_url= R.string.server_url + "book_cab.php";
 
         double src_lat1=Double.valueOf(strings[0]);
         double src_lng1=Double.valueOf(strings[1]);

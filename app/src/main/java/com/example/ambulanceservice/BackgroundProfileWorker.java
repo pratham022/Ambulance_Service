@@ -34,7 +34,7 @@ public class BackgroundProfileWorker extends AsyncTask<String, Void, User> {
 
     @Override
     protected User doInBackground(String... strings) {
-        String login_url="http://10.0.2.2/userInfo.php";
+        String login_url= R.string.server_url + "userInfo.php";
 
         String email=strings[0];
 
