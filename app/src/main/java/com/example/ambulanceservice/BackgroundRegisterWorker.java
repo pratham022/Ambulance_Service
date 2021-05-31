@@ -35,9 +35,9 @@ public class BackgroundRegisterWorker extends AsyncTask<String, Void, String> {
 
 
         if (type.equals("customer"))
-            register_url = R.string.server_url + "user_register.php";
+            register_url = "https://quickcare.000webhostapp.com/user_register.php";
         else
-            register_url = R.string.server_url + "driver_register.php";
+            register_url = "https://quickcare.000webhostapp.com/driver_register.php";
 
         if(type.equals("customer"))
         {

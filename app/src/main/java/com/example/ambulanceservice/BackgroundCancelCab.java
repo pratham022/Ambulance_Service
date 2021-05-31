@@ -35,7 +35,7 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
 
-        String login_url= R.string.server_url+ "cancel_book_cab.php";
+        String login_url= "https://quickcare.000webhostapp.com/cancel_book_cab.php";
 
         String ride_id,cab_id;
         ride_id=strings[0];

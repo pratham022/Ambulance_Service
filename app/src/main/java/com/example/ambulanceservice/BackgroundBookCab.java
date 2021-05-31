@@ -42,7 +42,7 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
     @Override
     protected Ride_Details doInBackground(String... strings) {
 
-        String login_url= R.string.server_url + "book_cab.php";
+        String login_url= "https://quickcare.000webhostapp.com/book_cab.php";
 
         double src_lat1=Double.valueOf(strings[0]);
         double src_lng1=Double.valueOf(strings[1]);
@@ -133,6 +133,8 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
 
 
         }catch (Exception e){
+            System.out.println("Cannot create connection");
+            e.printStackTrace();
             Toast.makeText(context.getApplicationContext(), "error", Toast.LENGTH_LONG).show();
         }
         return new Ride_Details();
