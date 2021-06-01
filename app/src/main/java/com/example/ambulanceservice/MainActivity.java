@@ -3,6 +3,7 @@ package com.example.ambulanceservice;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -14,11 +15,13 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.text.Layout;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Intent;
 
@@ -124,7 +127,6 @@ public class MainActivity extends AppCompatActivity implements
 
 
 
-
     /**
      * That's where the PermissionsManager class comes into play.
      * With the PermissionsManager class, you can check whether the user has granted
@@ -173,15 +175,23 @@ The permission result is invoked once the user decides whether to allow or deny 
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer);
 
 
+
         toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open, R.string.close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_menu);
+        View headerView = navigationView.getHeaderView(0);
+        TextView navUsername = (TextView) headerView.findViewById(R.id.usernameText);
+        navUsername.setText(sh.getString("name",null));
+
 
         nav.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-               // Log.e("In navigation Listner","Here");
 
                 if(item.getTitle().equals("Profile"))
                 {
@@ -191,6 +201,10 @@ The permission result is invoked once the user decides whether to allow or deny 
                 else if(item.getTitle().equals("Call"))
                 {
                     openCall();
+                }
+                else if(item.getTitle().equals("Logout"))
+                {
+                    logoutFrom();
                 }
 
                 return false;
@@ -216,6 +230,17 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
 
+    }
+
+    private void logoutFrom()
+    {
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sh.edit();
+        editor.remove("name");
+        editor.remove("phone");
+        Intent intent=new Intent(this,LoginActivity.class);
+        startActivity(intent);
+        editor.commit();
     }
 
     private void openProfile()

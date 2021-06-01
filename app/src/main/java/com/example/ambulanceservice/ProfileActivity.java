@@ -33,6 +33,11 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponse{
             TextView phone=(TextView)findViewById(R.id.phone);
             phone.setText(sh.getString("phone",null));
         }
+        if(sh.getString("name",null)!=null)
+        {
+            TextView name=(TextView)findViewById(R.id.username);
+            name.setText(sh.getString("name",null));
+        }
        // fetchData();
 //        BackgroundProfileWorker backgroundProfileWorker=new BackgroundProfileWorker(this);
 //        backgroundProfileWorker.delegate=this;

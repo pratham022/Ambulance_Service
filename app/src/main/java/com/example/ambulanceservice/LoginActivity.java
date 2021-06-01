@@ -123,10 +123,12 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
             if (response.getString("status").equals("1")) {
                 JSONObject jsonObject =  response.getJSONObject("data");
                 String phone=jsonObject.getString("phone");
+                String name=jsonObject.getString("name");
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("phone", phone);
+                myEdit.putString("name",name);
                 myEdit.apply();
 
                 Intent i = new Intent(this, MainActivity.class);
