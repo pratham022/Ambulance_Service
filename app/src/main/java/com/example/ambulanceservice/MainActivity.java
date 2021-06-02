@@ -207,6 +207,7 @@ The permission result is invoked once the user decides whether to allow or deny 
                     logoutFrom();
                 }
 
+
                 return false;
             }
         });
@@ -232,12 +233,15 @@ The permission result is invoked once the user decides whether to allow or deny 
 
     }
 
+
+
     private void logoutFrom()
     {
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         SharedPreferences.Editor editor = sh.edit();
         editor.remove("name");
         editor.remove("phone");
+        editor.remove("Password");
         Intent intent=new Intent(this,LoginActivity.class);
         startActivity(intent);
         editor.commit();

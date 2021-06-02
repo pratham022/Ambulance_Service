@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,16 +34,24 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponse{
         if(sh.getString("phone", null) != null){
             TextView phone=(TextView)findViewById(R.id.phone);
             phone.setText(sh.getString("phone",null));
+            EditText editText=(EditText)findViewById(R.id.txtPhone);
+            editText.setText(sh.getString("phone",null));
         }
         if(sh.getString("name",null)!=null)
         {
             TextView name=(TextView)findViewById(R.id.username);
             name.setText(sh.getString("name",null));
+            EditText editText=(EditText)findViewById(R.id.txtName);
+            editText.setText(sh.getString("name",null));
         }
-       // fetchData();
-//        BackgroundProfileWorker backgroundProfileWorker=new BackgroundProfileWorker(this);
-//        backgroundProfileWorker.delegate=this;
-//        backgroundProfileWorker.execute("tanayawankar58@gmail.com");
+        if(sh.getString("Password",null)!=null)
+        {
+            EditText editText=(EditText)findViewById(R.id.txtPassword);
+            editText.setText(sh.getString("Password",null));
+            EditText editText2=(EditText)findViewById(R.id.txtPassword2);
+            editText2.setText(sh.getString("Password",null));
+        }
+
 
     }
 
@@ -56,62 +66,11 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponse{
     }
 
 
-//    public void fetchData(){
-//        String login_url="http://10.0.2.2/userInfo.php";
-//        try {
-//
-//            URL url = new URL(login_url);
-//            HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
-//            httpURLConnection.setRequestMethod("POST");
-//            httpURLConnection.setDoOutput(true);
-//            httpURLConnection.setDoInput(true);
-//            System.out.println("1");
-//            OutputStream outputStream = httpURLConnection.getOutputStream();
-//            BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-//            String post_data = URLEncoder.encode("email", "UTF-8") + "=" + URLEncoder.encode("tanayawankar58@gmail.com", "UTF-8");
-//            System.out.println("2");
-//            bufferedWriter.write(post_data);
-//            bufferedWriter.flush();
-//            bufferedWriter.close();
-//            outputStream.close();
-//            InputStream inputStream = httpURLConnection.getInputStream();
-//            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream, "iso-8859-1"));
-//            Log.d("Profile Activity","Reading data");
-//            String result = "";
-//            String line;
-//            while ((line = bufferedReader.readLine()) != null) {
-//                result += line;
-//                System.out.println(line);
-//            }
-//            bufferedReader.close();
-//            inputStream.close();
-//            httpURLConnection.disconnect();
-//
-//            JSONObject response_data = new JSONObject(result);
-//
-//            if (response_data.getString("status").equals("1")) {
-//                String id = response_data.getJSONObject("data").getString("id");
-//                String name = response_data.getJSONObject("data").getString("name");
-//                String phone = response_data.getJSONObject("data").getString("phone");
-//                String email = response_data.getJSONObject("data").getString("email");
-//                String address = response_data.getJSONObject("data").getString("address");
-//
-//                TextView username=(TextView)findViewById(R.id.username);
-//
-//                username.setText(name);
-//
-//                TextView phonenum=(TextView)findViewById(R.id.phone);
-//                phonenum.setText(phone);
-//
-//
-//
-//            } else{
-//                Toast.makeText(getApplicationContext(), response_data.getString("data"), Toast.LENGTH_LONG).show();
-//            }
-//
-//
-//        }catch (Exception e){
-//            Toast.makeText(getApplicationContext(), "error", Toast.LENGTH_LONG).show();
-//        }
-//    }
+    public void EditDetails(View view)
+    {
+
+    }
+
+
+
 }

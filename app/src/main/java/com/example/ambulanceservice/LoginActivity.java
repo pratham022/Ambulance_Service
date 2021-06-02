@@ -92,6 +92,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         }
 
         if (validPhone && validPass && validType) {
+            SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sharedPreferences.edit();
+            myEdit.putString("Password",pass);
+            myEdit.apply();
+
             BackgroundLoginWorker backgroundLoginWorker = new BackgroundLoginWorker(this);
             backgroundLoginWorker.delegate = this;
             backgroundLoginWorker.execute(phone, pass, type);
