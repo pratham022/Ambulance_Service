@@ -96,10 +96,10 @@
             app:layout_constraintTop_toBottomOf="@+id/txtView" />
 
         <EditText
-            android:id="@+id/txtPhone"
+            android:id="@+id/txtAddress"
             android:layout_width="match_parent"
             android:layout_height="42dp"
-            android:hint="@string/phone"
+            android:hint="@string/address"
             android:layout_marginStart="32dp"
             android:layout_marginLeft="32dp"
             android:layout_marginTop="32dp"

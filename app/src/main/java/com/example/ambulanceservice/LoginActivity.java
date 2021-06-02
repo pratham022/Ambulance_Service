@@ -129,11 +129,23 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
                 JSONObject jsonObject =  response.getJSONObject("data");
                 String phone=jsonObject.getString("phone");
                 String name=jsonObject.getString("name");
+                String address="";
+                String email="";
+                if (jsonObject.has("address") && !jsonObject.isNull("address")) {
+                    // Do something with object.
+                    address=jsonObject.getString("address");
+                }
+                if(jsonObject.has("email") && !jsonObject.isNull("email"))
+                {
+                    email=jsonObject.getString("email");
+                }
 
                 SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sharedPreferences.edit();
                 myEdit.putString("phone", phone);
                 myEdit.putString("name",name);
+                myEdit.putString("address",address);
+                myEdit.putString("email",email);
                 myEdit.apply();
 
                 Intent i = new Intent(this, MainActivity.class);
