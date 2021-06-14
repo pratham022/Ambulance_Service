@@ -14,8 +14,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.AmbulanceService">
-        <activity android:name=".UserRides"></activity>
-        <activity android:name=".RegisterDriver"></activity>
+        <activity android:name=".Rides"></activity>
+        <activity android:name=".UserRides" />
+        <activity android:name=".RegisterDriver" />
         <activity android:name=".ProfileActivity" />
         <activity android:name=".RegisterActivity" />
         <activity android:name=".LoginActivity">
@@ -25,7 +26,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MainActivity"></activity>
+        <activity android:name=".MainActivity" />
     </application>
 
 </manifest>

@@ -672,6 +672,13 @@ The permission result is invoked once the user decides whether to allow or deny 
         cabId = String.valueOf(s.cab_id);
 
         ExampleBottomSheetDialog.updateDetails();
+
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        String cust_name=sh.getString("name",null);
+        String cust_phone=sh.getString("phone",null);
+
+        BackgroundSendNotification backgroundSendNotification=new BackgroundSendNotification(getApplicationContext());
+        backgroundSendNotification.execute("Ride Awaiting",cust_name+" has booked a ride "+cust_phone,s.driver_phone);
     }
 
     @Override

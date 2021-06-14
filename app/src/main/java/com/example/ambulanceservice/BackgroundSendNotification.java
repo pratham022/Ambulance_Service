@@ -17,17 +17,18 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
-public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
+public class BackgroundSendNotification extends AsyncTask<String, Void, String> {
 
     Context context;
+
     AlertDialog alertDialog;
 
-    BackgroundCancelCab()
+    BackgroundSendNotification()
     {
 
     }
 
-    BackgroundCancelCab(Context c){
+    BackgroundSendNotification(Context c){
         context=c;
     }
 
@@ -35,14 +36,14 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
     @Override
     protected String doInBackground(String... strings) {
 
-        String login_url= "https://quickcare.000webhostapp.com/cancel_book_cab.php";
+        String send_notification_url= "https://quickcare.000webhostapp.com/sendSinglePush.php";
 
-        String ride_id,cab_id;
-        ride_id=strings[0];
-        cab_id=strings[1];
+        String title=strings[0];
+        String message=strings[1];
+        String phone=strings[2];
 
         try{
-            URL url = new URL(login_url);
+            URL url = new URL(send_notification_url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
             httpURLConnection.setRequestMethod("POST");
             httpURLConnection.setDoOutput(true);
@@ -50,8 +51,9 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
 
             OutputStream outputStream = httpURLConnection.getOutputStream();
             BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(outputStream, "UTF-8"));
-            String post_data = URLEncoder.encode("ride_id", "UTF-8") + "=" + URLEncoder.encode(ride_id, "UTF-8")
-                    + "&&" +URLEncoder.encode("cab_id", "UTF-8")+"="+URLEncoder.encode(cab_id, "UTF-8");
+            String post_data = URLEncoder.encode("title", "UTF-8") + "=" + URLEncoder.encode(title, "UTF-8")
+                    + "&&" +URLEncoder.encode("message", "UTF-8")+"="+URLEncoder.encode(message, "UTF-8")
+                    + "&&" +URLEncoder.encode("phone", "UTF-8")+"="+URLEncoder.encode(phone, "UTF-8");
 
             bufferedWriter.write(post_data);
             bufferedWriter.flush();
@@ -73,7 +75,7 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
 
             if (response_data.getString("status").equals("1")) {
 
-                 final_result="Booking canceled";
+                final_result="Booking canceled";
 
 
             }else
@@ -92,25 +94,10 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
     }
 
     @Override
-    protected void onProgressUpdate(Void... values) {
-        super.onProgressUpdate(values);
-    }
-
-    @Override
     protected void onPostExecute(String s) {
         super.onPostExecute(s);
-        Log.e("Herere", "cab cancelled send");
-        if(s.equals("Booking canceled"))
-        {
-            ExampleBottomSheetDialog.resetDetails();
-            alertDialog=new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Booking canceled successfully");
-        }
-        else
-        {
-            alertDialog=new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Unable to cancel booking");
-        }
+        Log.e("Herere", "notification send");
+
 
 
     }
