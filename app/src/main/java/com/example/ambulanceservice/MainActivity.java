@@ -237,6 +237,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
     private void logoutFrom()
     {
+        ExampleBottomSheetDialog.resetDetails();
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         SharedPreferences.Editor editor = sh.edit();
         editor.remove("name");

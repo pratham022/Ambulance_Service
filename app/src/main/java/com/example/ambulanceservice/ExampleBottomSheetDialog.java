@@ -3,6 +3,8 @@ package com.example.ambulanceservice;
 import android.content.Context;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
+
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ public class ExampleBottomSheetDialog extends BottomSheetDialogFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.bottom_sheet_layout, container, false);
 
+        Log.e("Dialog", "On Create View");
         Button button1 = v.findViewById(R.id.button1);
         Button button2 = v.findViewById(R.id.button2);
         txtDriverName = v.findViewById(R.id.driver_name);
