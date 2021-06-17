@@ -206,6 +206,11 @@ The permission result is invoked once the user decides whether to allow or deny 
                 {
                     logoutFrom();
                 }
+                else if(item.getTitle().equals("Rides"))
+                {
+                    getRides();
+                }
+
 
 
                 return false;
@@ -233,6 +238,11 @@ The permission result is invoked once the user decides whether to allow or deny 
 
     }
 
+    private void getRides()
+    {
+        Intent intent=new Intent(this,Rides.class);
+        startActivity(intent);
+    }
 
 
     private void logoutFrom()

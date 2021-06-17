@@ -13,8 +13,8 @@
         android:layout_toEndOf="@+id/imageView"
         android:layout_toRightOf="@+id/imageView"
         android:paddingBottom="10dp"
-        android:text="Ride Num"
-        android:textSize="35dp"
+        android:text="Ride"
+        android:textSize="20dp"
         android:textStyle="bold" />
 
     <ImageView
@@ -31,8 +31,8 @@
         android:paddingLeft="300dp"
         android:layout_alignParentRight="true"
         android:paddingBottom="10dp"
-        android:text="Rs.25"
-        android:textSize="25dp"
+        android:text=""
+        android:textSize="10dp"
         />
 
     <TextView
@@ -43,8 +43,8 @@
         android:layout_toEndOf="@+id/imageView"
         android:layout_toRightOf="@+id/imageView"
         android:paddingTop="10dp"
-        android:text="Source"
-        android:textSize="25dp"
+        android:text=""
+        android:textSize="10dp"
         android:textStyle="bold" />
 
     <TextView
@@ -55,8 +55,8 @@
         android:layout_toEndOf="@+id/imageView"
         android:layout_toRightOf="@+id/imageView"
         android:paddingTop="10dp"
-        android:text="Destination"
-        android:textSize="25dp"
+        android:text=""
+        android:textSize="10dp"
         android:textStyle="bold" />
 
 
