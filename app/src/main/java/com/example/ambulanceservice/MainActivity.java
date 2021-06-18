@@ -370,11 +370,13 @@ The permission result is invoked once the user decides whether to allow or deny 
                         }
                         navigationMapRoute.addRoute(currentRoute);
 
+                        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                        String id = sh.getString("id", null);
 
                         // book cab
                         BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
                         backgroundBookCab.delegate=MainActivity.this;
-                        backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),String.valueOf(7),String.valueOf(1));
+                        backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),id,String.valueOf(1));
 
                     }
 
