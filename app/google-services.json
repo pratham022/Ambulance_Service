@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "329442768095",
+    "project_id": "ambulance-service-b2fff",
+    "storage_bucket": "ambulance-service-b2fff.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:329442768095:android:1a2d4d3475e985e662e56a",
+        "android_client_info": {
+          "package_name": "com.example.ambulanceservice"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "329442768095-nmim97eb5lnopn0qqih4fb8gpuhpikh1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCwZQlt7cJK34Iaib1hPp13WsVU6S0Z1sk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "329442768095-nmim97eb5lnopn0qqih4fb8gpuhpikh1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -164,7 +164,7 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
                 myEdit.putString("Password",pass);
                 myEdit.apply();
 
-                Intent i = new Intent(this, MainActivity.class);
+                Intent i = new Intent(this, LoginActivity.class);
                 startActivity(i);
             } else {
                 Toast.makeText(getApplicationContext(), response.getString("data"), Toast.LENGTH_LONG).show();
