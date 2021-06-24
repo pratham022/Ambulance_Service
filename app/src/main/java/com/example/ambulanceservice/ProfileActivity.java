@@ -91,11 +91,13 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponseS
             TextView emailText=(TextView)findViewById(R.id.txtEmail);
             email=String.valueOf(emailText.getText());
 
+            Log.e("Address",address);
             SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
             BackgroundEditUserWorker backgroundEditUserWorker = new BackgroundEditUserWorker(this);
             backgroundEditUserWorker.delegate = this;
             backgroundEditUserWorker.execute(sh.getString("phone", null) ,name, email, address,password1);
+
         //}
 
 
@@ -113,11 +115,10 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponseS
                 myEdit.putString("address",address);
                 myEdit.putString("email",email);
 
+               // Toast.makeText(getApplicationContext(), response.getString("details updated successfully"), Toast.LENGTH_LONG).show();
+                Intent i = new Intent(this, MainActivity.class);
+                startActivity(i);
 
-
-
-
-                Toast.makeText(getApplicationContext(), response.getString("details updated successfully"), Toast.LENGTH_LONG).show();
 
             } else {
                 Toast.makeText(getApplicationContext(), response.getString("details not updated"), Toast.LENGTH_LONG).show();

@@ -2,6 +2,7 @@ package com.example.ambulanceservice;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -31,16 +32,19 @@ import java.net.URLEncoder;
 
 public class LoginActivity extends AppCompatActivity implements AsyncResponseString{
 
+    public  static Context cxt;
     private EditText txtPhone, txtPassword;
     private Button btnLogin;
     private  String type, phone, pass;
     private String TAG = "LoginActivity";
+    public GetToken getToken;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
 
+        cxt=getApplicationContext();
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 
         if(sh.getString("phone", null) != null){
@@ -150,8 +154,11 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
                 myEdit.putString("email",email);
                 myEdit.apply();
 
+                getToken=new GetToken();
+
                 Intent i = new Intent(this, MainActivity.class);
                 startActivity(i);
+                finishAffinity();
             } else {
                 Toast.makeText(getApplicationContext(), response.getString("data"), Toast.LENGTH_LONG).show();
             }

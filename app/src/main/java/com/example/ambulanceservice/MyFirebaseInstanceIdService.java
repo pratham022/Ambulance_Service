@@ -1,5 +1,7 @@
 package com.example.ambulanceservice;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -32,10 +34,10 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
 
     private void storeToken(String token) {
         //we will save the token in sharedpreferences later
-//        Context cxt=MainActivity.cxt;
-//        SharedPreferences sh= cxt.getSharedPreferences("MySharedPrefDriver", MODE_PRIVATE);
-//        SharedPreferences.Editor myEdit = sh.edit();
-//        myEdit.putString("token",token);
-//        myEdit.commit();
+        Context cxt=LoginActivity.cxt;
+        SharedPreferences sh= cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        SharedPreferences.Editor myEdit = sh.edit();
+        myEdit.putString("token",token);
+        myEdit.commit();
     }
 }

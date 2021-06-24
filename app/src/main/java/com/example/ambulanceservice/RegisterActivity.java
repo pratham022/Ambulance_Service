@@ -134,6 +134,7 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
                 intent.putExtra("phone",phone);
                 intent.putExtra("password",pass);
                 startActivity(intent);
+
             }
             else
             {
@@ -157,15 +158,11 @@ public class RegisterActivity extends AppCompatActivity implements AsyncResponse
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {
 
-                SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-                SharedPreferences.Editor myEdit = sharedPreferences.edit();
-                myEdit.putString("phone", phone);
-                myEdit.putString("name",name);
-                myEdit.putString("Password",pass);
-                myEdit.apply();
+
 
                 Intent i = new Intent(this, LoginActivity.class);
                 startActivity(i);
+                finishAffinity();
             } else {
                 Toast.makeText(getApplicationContext(), response.getString("data"), Toast.LENGTH_LONG).show();
             }

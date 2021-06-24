@@ -22,6 +22,8 @@ public class BackgroundSaveToken extends AsyncTask<String, Void, String> {
 
     public AsyncResponseString delegate = null;
 
+    BackgroundSaveToken(){};
+
     BackgroundSaveToken(Context cxt)
     {
         context=cxt;

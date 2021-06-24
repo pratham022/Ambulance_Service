@@ -253,9 +253,12 @@ The permission result is invoked once the user decides whether to allow or deny 
         editor.remove("name");
         editor.remove("phone");
         editor.remove("Password");
+        editor.remove("token");
+        editor.commit();
         Intent intent=new Intent(this,LoginActivity.class);
         startActivity(intent);
-        editor.commit();
+        finishAffinity();
+
     }
 
     private void openProfile()
