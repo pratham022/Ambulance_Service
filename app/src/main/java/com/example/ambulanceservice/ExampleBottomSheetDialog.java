@@ -1,6 +1,9 @@
 package com.example.ambulanceservice;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import androidx.annotation.Nullable;
 
@@ -10,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
+import static android.content.Context.MODE_PRIVATE;
 
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 
@@ -21,6 +25,7 @@ public class ExampleBottomSheetDialog extends BottomSheetDialogFragment {
     static String cabNo = "Vehicle No: ";
     static String cabFare = "Fare: ";
     static String modelName = "Model Name: ";
+    BackgroundCancelCab backgroundCancelCab;
 
     static TextView txtDriverName;
     static TextView txtDriverPhone;
@@ -46,17 +51,29 @@ public class ExampleBottomSheetDialog extends BottomSheetDialogFragment {
         updateDetails();
 
 
+        //call driver
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onButtonClicked("Button 1 clicked");
+                SharedPreferences sh = LoginActivity.cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                String driver_num=sh.getString("driver_phone",null);
+                Intent intent = new Intent(Intent.ACTION_DIAL);
+                intent.setData(Uri.parse("tel:"+driver_num));
+                startActivity(intent);
+
                 dismiss();
             }
         });
+
+        //cancel ride
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mListener.onButtonClicked("Button 2 clicked");
+               backgroundCancelCab=new BackgroundCancelCab();
+                SharedPreferences sh = LoginActivity.cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                String cab_id=sh.getString("cab_id",null);
+                String ride_id=sh.getString("ride_id",null);
+                backgroundCancelCab.execute(ride_id,cab_id);
                 dismiss();
             }
         });

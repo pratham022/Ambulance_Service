@@ -38,6 +38,6 @@ public class MyFirebaseInstanceIdService extends FirebaseInstanceIdService {
         SharedPreferences sh= cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
         SharedPreferences.Editor myEdit = sh.edit();
         myEdit.putString("token",token);
-        myEdit.commit();
+        myEdit.apply();
     }
 }

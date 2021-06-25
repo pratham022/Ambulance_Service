@@ -107,13 +107,14 @@ public class ProfileActivity extends AppCompatActivity implements AsyncResponseS
         try {
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {
-
+                Log.e("Details updated","In profile worker");
                 SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 SharedPreferences.Editor myEdit = sh.edit();
                 myEdit.putString("name",name);
                 myEdit.putString("Password",password1);
                 myEdit.putString("address",address);
                 myEdit.putString("email",email);
+                myEdit.apply();
 
                // Toast.makeText(getApplicationContext(), response.getString("details updated successfully"), Toast.LENGTH_LONG).show();
                 Intent i = new Intent(this, MainActivity.class);

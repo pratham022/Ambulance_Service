@@ -102,14 +102,16 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
         Log.e("Herere", "cab cancelled send");
         if(s.equals("Booking canceled"))
         {
-            ExampleBottomSheetDialog.resetDetails();
-            alertDialog=new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Booking canceled successfully");
+//            ExampleBottomSheetDialog.resetDetails();
+//            alertDialog=new AlertDialog.Builder(context).create();
+//            alertDialog.setTitle("Booking canceled successfully");
+            Log.e("cancel cab","success");
         }
         else
         {
-            alertDialog=new AlertDialog.Builder(context).create();
-            alertDialog.setTitle("Unable to cancel booking");
+//            alertDialog=new AlertDialog.Builder(context).create();
+//            alertDialog.setTitle("Unable to cancel booking");
+            Log.e("cancel cab","not success");
         }
 
 

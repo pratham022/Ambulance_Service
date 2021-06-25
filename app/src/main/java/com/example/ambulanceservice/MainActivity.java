@@ -254,6 +254,8 @@ The permission result is invoked once the user decides whether to allow or deny 
         editor.remove("phone");
         editor.remove("Password");
         editor.remove("token");
+        editor.remove("ride_id");
+        editor.remove("cab_id");
         editor.commit();
         Intent intent=new Intent(this,LoginActivity.class);
         startActivity(intent);
@@ -686,11 +688,18 @@ The permission result is invoked once the user decides whether to allow or deny 
         rideId = String.valueOf(s.ride_id);
         cabId = String.valueOf(s.cab_id);
 
+
+
         ExampleBottomSheetDialog.updateDetails();
 
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String cust_name=sh.getString("name",null);
         String cust_phone=sh.getString("phone",null);
+        SharedPreferences.Editor myEdit = sh.edit();
+        myEdit.putString("cab_id",cabId);
+        myEdit.putString("ride_id",rideId);
+        myEdit.putString("driver_phone",s.driver_phone);
+        myEdit.apply();
 
         BackgroundSendNotification backgroundSendNotification=new BackgroundSendNotification(getApplicationContext());
         backgroundSendNotification.execute("Ride Awaiting",cust_name+" has booked a ride "+cust_phone,s.driver_phone);
