@@ -74,6 +74,11 @@ public class ExampleBottomSheetDialog extends BottomSheetDialogFragment {
                 String cab_id=sh.getString("cab_id",null);
                 String ride_id=sh.getString("ride_id",null);
                 backgroundCancelCab.execute(ride_id,cab_id);
+                txtDriverName.setText("");
+                txtCabFare.setText("");
+                txtDriverPhone.setText("");
+                txtCabNo.setText("");
+                txtModelName.setText("");
                 dismiss();
             }
         });

@@ -59,6 +59,10 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
         int user_id=Integer.valueOf(strings[4]);
         int payment_id=Integer.valueOf(strings[5]);
 
+        String source_text=String.valueOf(strings[6]);
+        String destination_text=String.valueOf(strings[7]);
+
+
         try {
 
             URL url = new URL(login_url);
@@ -75,7 +79,9 @@ public class BackgroundBookCab  extends AsyncTask<String, Void, Ride_Details> {
                     + "&&" +URLEncoder.encode("dest_lat", "UTF-8")+"="+URLEncoder.encode(String.valueOf(dest_lat), "UTF-8")
                     + "&&" +URLEncoder.encode("dest_lng", "UTF-8")+"="+URLEncoder.encode(String.valueOf(dest_lng), "UTF-8")
                     + "&&" +URLEncoder.encode("user_id", "UTF-8")+"="+URLEncoder.encode(String.valueOf(user_id), "UTF-8")
-                    + "&&" +URLEncoder.encode("payment_id", "UTF-8")+"="+URLEncoder.encode(String.valueOf(payment_id), "UTF-8");
+                    + "&&" +URLEncoder.encode("payment_id", "UTF-8")+"="+URLEncoder.encode(String.valueOf(payment_id), "UTF-8")
+                    + "&&" +URLEncoder.encode("src_str", "UTF-8")+"="+URLEncoder.encode(source_text, "UTF-8")
+                    + "&&" +URLEncoder.encode("dest_str", "UTF-8")+"="+URLEncoder.encode(destination_text, "UTF-8");
 
             // System.out.println("2");
             bufferedWriter.write(post_data);

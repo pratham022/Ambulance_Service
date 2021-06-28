@@ -96,6 +96,8 @@ public class MainActivity extends AppCompatActivity implements
 
     private String TAG = "MainActivity";
 
+    public static  Context cxt;
+
 
     // Variables needed to handle location permissions
     private PermissionsManager permissionsManager;
@@ -158,9 +160,13 @@ The permission result is invoked once the user decides whether to allow or deny 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        cxt=getApplicationContext();
+
 
         // we pass access token to get our map
         Mapbox.getInstance(this, getString(R.string.access_token));
+
+
 
         setContentView(R.layout.activity_main);
         mapView = findViewById(R.id.mapView);
@@ -276,6 +282,14 @@ The permission result is invoked once the user decides whether to allow or deny 
         startActivity(intent);
     }
 
+    public static void clearRideDetails()
+    {
+
+//        TextView source_view=MainActivity.findViewById(R.id.editTextSource);
+//        TextView destination_view=MainActivity.cxt.findViewById(R.id.editTextDestination);
+
+    }
+
 
 
     private void addDestinationIconSymbolLayer(@NonNull Style loadedMapStyle) {
@@ -378,10 +392,18 @@ The permission result is invoked once the user decides whether to allow or deny 
                         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
                         String id = sh.getString("id", null);
 
+                        String source_text,destination_text;
+                        TextView source_view=findViewById(R.id.editTextSource);
+                        TextView destination_view=findViewById(R.id.editTextDestination);
+                        source_text=String.valueOf(source_view.getText());
+                        destination_text=String.valueOf(destination_view.getText());
+
+
+
                         // book cab
                         BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
                         backgroundBookCab.delegate=MainActivity.this;
-                        backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),id,String.valueOf(1));
+                        backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),id,String.valueOf(1),source_text,destination_text);
 
                     }
 
@@ -714,7 +736,6 @@ The permission result is invoked once the user decides whether to allow or deny 
             // cancel cab
             BackgroundCancelCab backgroundCancelCab=new BackgroundCancelCab(getApplicationContext());
             backgroundCancelCab.execute(rideId, cabId);
-
         }
     }
 }

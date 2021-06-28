@@ -126,8 +126,8 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
 
     @Override
     public void processStringFinish(String s) {
-        Log.d(TAG, s);
-        Log.d(TAG, "In Process finish");
+//        Log.d(TAG, s);
+//        Log.d(TAG, "In Process finish");
         try {
             JSONObject response = new JSONObject(s);
             if (response.getString("status").equals("1")) {

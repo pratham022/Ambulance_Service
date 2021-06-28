@@ -86,16 +86,10 @@ public class Rides extends AppCompatActivity implements AsyncResponseString {
                     JSONObject jsonObject=jsonArray.getJSONObject(i);
                     temp.price=jsonObject.getString("price");
                     temp.time=jsonObject.getString("start_time");
-                    double lati = Double.parseDouble(jsonObject.getString("src_lat"));
-                    double lngi = Double.parseDouble(jsonObject.getString("src_long"));
-                    LatLng src_lat_lng=new LatLng(lati,lngi);
-                    getAddressFromLocation(src_lat_lng,Rides.this,new com.example.ambulanceservice.GeocoderHandler());
-                    temp.source=result;
-                    lati=Double.parseDouble(jsonObject.getString("dest_lat"));
-                    lngi=Double.parseDouble(jsonObject.getString("dest_long"));
-                    LatLng dest_lat_lng=new LatLng(lati,lngi);
-                    getAddressFromLocation(dest_lat_lng,Rides.this,new com.example.ambulanceservice.GeocoderHandler());
-                    temp.destination=result;
+                    String src_str=jsonObject.getString("src_str");
+                    String dest_str=jsonObject.getString("dest_str");
+                    temp.source=src_str;
+                    temp.destination=dest_str;
                     rideList.add(temp);
                 }
 
