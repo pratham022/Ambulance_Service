@@ -36,7 +36,7 @@ public class BackgroundSendNotification extends AsyncTask<String, Void, String> 
     @Override
     protected String doInBackground(String... strings) {
 
-        String send_notification_url= "https://quickcare.000webhostapp.com/sendSinglePush.php";
+        String send_notification_url= context.getResources().getString(R.string.server_url)+"/sendSinglePush.php";
 
         String title=strings[0];
         String message=strings[1];

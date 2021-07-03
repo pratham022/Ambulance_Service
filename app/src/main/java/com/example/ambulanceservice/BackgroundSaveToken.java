@@ -38,7 +38,7 @@ public class BackgroundSaveToken extends AsyncTask<String, Void, String> {
 
         Log.e("token background worker",token);
 
-        String  saveToken_url = "https://quickcare.000webhostapp.com/customerToken.php";
+        String  saveToken_url = context.getResources().getString(R.string.server_url)+"/customerToken.php";
 
         try {
 

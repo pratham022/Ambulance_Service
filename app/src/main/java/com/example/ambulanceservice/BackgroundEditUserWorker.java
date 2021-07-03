@@ -36,7 +36,7 @@ public class BackgroundEditUserWorker extends AsyncTask<String, Void, String> {
         String address = strings[3];
         String password=strings[4];
 
-        String  editDetail_url = "https://quickcare.000webhostapp.com/editUser.php";
+        String  editDetail_url = context.getResources().getString(R.string.server_url)+"/editUser.php";
 
         try {
 

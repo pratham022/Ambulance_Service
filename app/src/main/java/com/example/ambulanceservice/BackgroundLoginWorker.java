@@ -36,7 +36,8 @@ public class BackgroundLoginWorker extends AsyncTask<String, Void, String> {
         String pass = params[1];
         String type = params[2];
         Log.e("Params", phone+pass+type);
-        String login_url = "https://quickcare.000webhostapp.com/login.php";
+        String login_url = context.getResources().getString(R.string.server_url)+"/login.php";
+        Log.e("In background login",context.getResources().getString(R.string.server_url));
         try {
             URL url = new URL(login_url);
             HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();

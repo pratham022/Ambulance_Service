@@ -285,8 +285,8 @@ The permission result is invoked once the user decides whether to allow or deny 
     public static void clearRideDetails()
     {
 
-//        TextView source_view=MainActivity.findViewById(R.id.editTextSource);
-//        TextView destination_view=MainActivity.cxt.findViewById(R.id.editTextDestination);
+        MainActivity.txtSource.setText("");
+        MainActivity.txtDestination.setText("");
 
     }
 
@@ -536,6 +536,7 @@ The permission result is invoked once the user decides whether to allow or deny 
     protected void onResume() {
         super.onResume();
         mapView.onResume();
+        Log.e("in mainactivity","on resume");
     }
 
     @Override

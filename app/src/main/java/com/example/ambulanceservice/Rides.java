@@ -53,6 +53,7 @@ public class Rides extends AppCompatActivity implements AsyncResponseString {
 
         //adding some values to our list
 
+        Log.e("Ride","onCreate");
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
         String phone=sh.getString("phone",null);
 
@@ -74,6 +75,7 @@ public class Rides extends AppCompatActivity implements AsyncResponseString {
 
     @Override
     public void processStringFinish(String s) {
+        Log.e("Ride","inProcess");
         try {
             Ride temp=new Ride();
             JSONObject response = new JSONObject(s);

@@ -69,8 +69,11 @@ public class ExampleBottomSheetDialog extends BottomSheetDialogFragment {
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-               backgroundCancelCab=new BackgroundCancelCab();
-                SharedPreferences sh = LoginActivity.cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                Context cxt=MainActivity.cxt;
+               backgroundCancelCab=new BackgroundCancelCab(cxt);
+               Log.e("context of mainactivity",String.valueOf(MainActivity.cxt));
+
+                SharedPreferences sh = cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
                 String cab_id=sh.getString("cab_id",null);
                 String ride_id=sh.getString("ride_id",null);
                 backgroundCancelCab.execute(ride_id,cab_id);

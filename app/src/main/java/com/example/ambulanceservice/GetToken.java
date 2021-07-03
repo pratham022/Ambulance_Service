@@ -13,6 +13,7 @@ public class GetToken implements AsyncResponseString,Runnable {
 
     SharedPreferences sh;
     MyFirebaseInstanceIdService myFirebaseInstanceIDService;
+    Context cxt;
 
 
     GetToken(){
@@ -33,7 +34,9 @@ public class GetToken implements AsyncResponseString,Runnable {
 
         Log.e("token",sh.getString("token",null));
 
-        BackgroundSaveToken backgroundSaveToken=new BackgroundSaveToken();
+        cxt=MainActivity.cxt;
+
+        BackgroundSaveToken backgroundSaveToken=new BackgroundSaveToken(cxt);
         backgroundSaveToken.delegate=this;
         backgroundSaveToken.execute(phone,token);
     }

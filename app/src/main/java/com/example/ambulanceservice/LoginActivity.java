@@ -43,7 +43,7 @@ public class LoginActivity extends AppCompatActivity implements AsyncResponseStr
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
+        Log.e("server_url",getResources().getString(R.string.server_url));
         cxt=getApplicationContext();
         SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
 

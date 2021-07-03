@@ -13,6 +13,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
         android:theme="@style/Theme.AmbulanceService">
         <activity android:name=".Rides"></activity>
         <activity android:name=".UserRides" />
@@ -27,6 +28,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".MainActivity" />
+
     </application>
 
 </manifest>
