@@ -44,6 +44,7 @@ import com.mapbox.android.core.permissions.PermissionsManager;
 import com.mapbox.api.directions.v5.models.DirectionsResponse;
 import com.mapbox.api.directions.v5.models.DirectionsRoute;
 import com.mapbox.geojson.Feature;
+import com.mapbox.geojson.FeatureCollection;
 import com.mapbox.geojson.Point;
 import com.mapbox.mapboxsdk.Mapbox;
 import com.mapbox.mapboxsdk.annotations.Icon;
@@ -66,6 +67,7 @@ import com.mapbox.services.android.navigation.ui.v5.route.NavigationMapRoute;
 import com.mapbox.services.android.navigation.v5.navigation.NavigationRoute;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -98,6 +100,8 @@ public class MainActivity extends AppCompatActivity implements
 
     public static  Context cxt;
 
+    private List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
+
 
     // Variables needed to handle location permissions
     private PermissionsManager permissionsManager;
@@ -106,7 +110,7 @@ public class MainActivity extends AppCompatActivity implements
     private LocationComponent locationComponent;
     private long DEFAULT_INTERVAL_IN_MILLISECONDS = 1000L;
     private long DEFAULT_MAX_WAIT_TIME = DEFAULT_INTERVAL_IN_MILLISECONDS * 5;
-// Variables needed to listen to location updates
+    // Variables needed to listen to location updates
     //Globally declare an instance of the class you created above:
     private MainActivityLocationCallback callback = new MainActivityLocationCallback(this);
 
@@ -121,11 +125,18 @@ public class MainActivity extends AppCompatActivity implements
     public static EditText txtSource;
     public static EditText txtDestination;
     public Location source;
-    public Point source_pt,destination_pt;
-    Marker destination_mk=null;
+    public Point source_pt,destination_pt, driver_pt;
+    Marker driver_mk=null;
 
     private String rideId = "";
     private String cabId = "";
+
+    private double driverLat;
+    private double driverLng;
+
+    private static final String SOURCE_ID = "SOURCE_ID";
+    private static final String ICON_ID = "ICON_ID";
+    private static final String LAYER_ID = "LAYER_ID";
 
 
 
@@ -141,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements
      * onRequestPermissionsResult() and call the permissionsManager's same method.
      * Note: The PermissionsManager can be used for requesting other permissions in addition to location.
      * */
-   // private Location originLocation;
+    // private Location originLocation;
 
     /*
     * The PermissionsListener is an interface that returns information about the state of permissions.
@@ -201,7 +212,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
                 if(item.getTitle().equals("Profile"))
                 {
-                  // Log.e("Open Profile","opening");
+                    // Log.e("Open Profile","opening");
                     openProfile();
                 }
                 else if(item.getTitle().equals("Call"))
@@ -321,35 +332,13 @@ The permission result is invoked once the user decides whether to allow or deny 
 
                         enableLocationComponent(style); ///if permission given set location
                         addDestinationIconSymbolLayer(style); // give style to marker
-                       // addSourceIconSymbolLayer(style);
-
-//                        LatLng pt=new LatLng(source.getLatitude(),source.getLongitude());
-//
-//                        getAddressFromLocation(pt,MainActivity.this,new GeocoderHandler());//reverse geocoding
-
-
-
-
 
                         mapboxMap.addOnMapClickListener(MainActivity.this);
                         button = findViewById(R.id.startButton);
                         button.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-
-                               // String destination=txtDestination.getText().toString();
                                 getDestination();
-//                                boolean simulateRoute = true;
-//                                NavigationLauncherOptions options = NavigationLauncherOptions.builder()
-//                                        .directionsRoute(currentRoute)
-//                                        .shouldSimulateRoute(simulateRoute)
-//                                        .build();
-//                                // Call this method with Context from within an Activity
-//                                NavigationLauncher.startNavigation(MainActivity.this, options);
-
-//                                BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
-//                                backgroundBookCab.delegate=MainActivity.this;
-//                                backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),String.valueOf(7),String.valueOf(1));
 
 
                             }
@@ -361,6 +350,8 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
     private void getRoute(Point origin, Point destination) {
+        Log.e("origin", String.valueOf(origin));
+        Log.e("destination", String.valueOf(destination));
         NavigationRoute.builder(this)
                 .accessToken(Mapbox.getAccessToken())
                 .origin(origin)
@@ -389,22 +380,6 @@ The permission result is invoked once the user decides whether to allow or deny 
                         }
                         navigationMapRoute.addRoute(currentRoute);
 
-                        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-                        String id = sh.getString("id", null);
-
-                        String source_text,destination_text;
-                        TextView source_view=findViewById(R.id.editTextSource);
-                        TextView destination_view=findViewById(R.id.editTextDestination);
-                        source_text=String.valueOf(source_view.getText());
-                        destination_text=String.valueOf(destination_view.getText());
-
-
-
-                        // book cab
-                        BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
-                        backgroundBookCab.delegate=MainActivity.this;
-                        backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),id,String.valueOf(1),source_text,destination_text);
-
                     }
 
                     @Override
@@ -421,43 +396,43 @@ The permission result is invoked once the user decides whether to allow or deny 
      */
     @SuppressWarnings( {"MissingPermission"})
     private void enableLocationComponent(@NonNull Style loadedMapStyle) {
-// Check if permissions are enabled and if not request
+        // Check if permissions are enabled and if not request
         if (PermissionsManager.areLocationPermissionsGranted(this)) {
 
-// Get an instance of the component
+            // Get an instance of the component
             locationComponent = mapboxMap.getLocationComponent();
 
 
 
 
 
-// Set the LocationComponent activation options
+            // Set the LocationComponent activation options
             //Retrieve and activate the LocationComponent once the user has granted location permission and the map has fully loaded.
             LocationComponentActivationOptions locationComponentActivationOptions =
                     LocationComponentActivationOptions.builder(this, loadedMapStyle)
                             .useDefaultLocationEngine(false)
                             .build();
 
-// Activate with the LocationComponentActivationOptions object
+            // Activate with the LocationComponentActivationOptions object
             locationComponent.activateLocationComponent(locationComponentActivationOptions);
 
-// Enable to make component visible
+            // Enable to make component visible
             /*
-            * There is a single method to either enable or disable the LocationComponent's visibility after activation.
-            *  The setLocationComponentEnabled() method requires a true/false boolean parameter. When set to false,
-            * this method will hide the device location icon and stop map camera animations from occurring.
-            * */
+             * There is a single method to either enable or disable the LocationComponent's visibility after activation.
+             *  The setLocationComponentEnabled() method requires a true/false boolean parameter. When set to false,
+             * this method will hide the device location icon and stop map camera animations from occurring.
+             * */
             locationComponent.setLocationComponentEnabled(true);
 
-// Set the component's camera mode
+            // Set the component's camera mode
             /*
-            * The method LocationComponent#setCameraMode(@CameraMode.Mode int cameraMode) allows developers to
-            *  set specific camera tracking instructions as the device location changes.
-            * There are 7 CameraMode options available:
-            * */
+             * The method LocationComponent#setCameraMode(@CameraMode.Mode int cameraMode) allows developers to
+             *  set specific camera tracking instructions as the device location changes.
+             * There are 7 CameraMode options available:
+             * */
             locationComponent.setCameraMode(CameraMode.TRACKING);
 
-// Set the component's render mode type of compass it is rendered
+            // Set the component's render mode type of compass it is rendered
             //The RenderMode class contains preset options for the device location image.
             //NORMAL
             //COMPASS
@@ -480,11 +455,11 @@ The permission result is invoked once the user decides whether to allow or deny 
     private void initLocationEngine() {
 
         /*
-        * If your application needs location information,
-        * the LocationEngine class can help you get this information while also simplifying
-        * the process and being flexible enough to use different services. The LocationEngine found in the core
-        * module now supports the following location providers:
-        * */
+         * If your application needs location information,
+         * the LocationEngine class can help you get this information while also simplifying
+         * the process and being flexible enough to use different services. The LocationEngine found in the core
+         * module now supports the following location providers:
+         * */
 
         /**
          * This will obtain the best location engine that is available and eliminate the need to
@@ -494,8 +469,8 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
         /*
-        * Request location updates once you know location permissions have been granted:
-        * */
+         * Request location updates once you know location permissions have been granted:
+         * */
         LocationEngineRequest request = new LocationEngineRequest.Builder(DEFAULT_INTERVAL_IN_MILLISECONDS)
                 .setPriority(LocationEngineRequest.PRIORITY_HIGH_ACCURACY)
                 .setMaxWaitTime(DEFAULT_MAX_WAIT_TIME).build();
@@ -546,9 +521,9 @@ The permission result is invoked once the user decides whether to allow or deny 
     }
 
     /*
-    * To prevent your application from having a memory leak, it is a good idea to stop
-    * requesting location updates inside of your activity's onStop() method.
-    * */
+     * To prevent your application from having a memory leak, it is a good idea to stop
+     * requesting location updates inside of your activity's onStop() method.
+     * */
     @Override
     protected void onStop() {
         super.onStop();
@@ -578,7 +553,7 @@ The permission result is invoked once the user decides whether to allow or deny 
         if (locationEngine != null) {
             locationEngine.removeLocationUpdates(callback);
         }
-      //  hide lines
+        //  hide lines
         mapView.onDestroy();
     }
 
@@ -610,20 +585,31 @@ The permission result is invoked once the user decides whether to allow or deny 
             foundGeocode.get(0).getLongitude();//getting longitude
             destination_pt=Point.fromLngLat(foundGeocode.get(0).getLongitude(),foundGeocode.get(0).getLatitude());
             Log.e("Destination location is",String.valueOf(foundGeocode.get(0).getLatitude())+" "+String.valueOf(foundGeocode.get(0).getLongitude()));
-            if(destination_mk==null)
-            {
-                destination_mk=mapboxMap.addMarker(new MarkerOptions()
-                        .position(new LatLng(foundGeocode.get(0).getLatitude(), foundGeocode.get(0).getLongitude()))
-                        .title("hospital"));
-            }else
-            {
-                destination_mk.setPosition(new LatLng(foundGeocode.get(0).getLatitude(), foundGeocode.get(0).getLongitude()));
-            }
-            getRoute(source_pt,destination_pt);
+
+            symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                    Point.fromLngLat(foundGeocode.get(0).getLongitude(), foundGeocode.get(0).getLatitude())));
+
+            SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+            String id = sh.getString("id", null);
+
+            String source_text,destination_text;
+            TextView source_view=findViewById(R.id.editTextSource);
+            TextView destination_view=findViewById(R.id.editTextDestination);
+            source_text=String.valueOf(source_view.getText());
+            destination_text=String.valueOf(destination_view.getText());
+
+
+
+            // book cab
+            BackgroundBookCab backgroundBookCab=new BackgroundBookCab(getApplicationContext());
+            backgroundBookCab.delegate=MainActivity.this;
+            backgroundBookCab.execute(String.valueOf(source_pt.latitude()),String.valueOf(source_pt.longitude()),String.valueOf(destination_pt.latitude()),String.valueOf(destination_pt.longitude()),id,String.valueOf(1),source_text,destination_text);
+
+
 
         }catch (IOException e)
         {
-          Log.d("MainActivity","got in error fetching destination");
+            Log.d("MainActivity","got in error fetching destination");
         }
 
 
@@ -637,6 +623,8 @@ The permission result is invoked once the user decides whether to allow or deny 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
+
+        //setting the address string from points
         getAddressFromLocation(point,MainActivity.this,new GeocoderHandler());
 
 
@@ -645,17 +633,20 @@ The permission result is invoked once the user decides whether to allow or deny 
         Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
         Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
                 locationComponent.getLastKnownLocation().getLatitude());
-
         source_pt=destinationPoint;
 
-        GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
-        if (source != null) {
-            source.setGeoJson(Feature.fromGeometry(destinationPoint));
-        }
+        symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                Point.fromLngLat(point.getLongitude(), point.getLatitude())));
 
 
 
-        //getRoute(originPoint, destinationPoint);
+
+
+//        GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
+//        if (source != null) {
+//            source.setGeoJson(Feature.fromGeometry(destinationPoint));
+//        }
+
         button.setEnabled(true);
         button.setBackgroundResource(R.color.mapbox_blue);
         return true;
@@ -711,7 +702,55 @@ The permission result is invoked once the user decides whether to allow or deny 
         rideId = String.valueOf(s.ride_id);
         cabId = String.valueOf(s.cab_id);
 
+        driverLat = s.getCab_lat();
+        driverLng = s.getCab_lng();
 
+        symbolLayerIconFeatureList.add(Feature.fromGeometry(
+                Point.fromLngLat(driverLng, driverLat)));
+
+
+        driver_pt=Point.fromLngLat(driverLng, driverLat);
+        Log.e("Driver location is",String.valueOf(driverLat+" "+driverLng));
+
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjf4m44iw0uza2spb3q0a7s41")
+
+// Add the SymbolLayer icon image to the map style
+                .withImage(ICON_ID, BitmapFactory.decodeResource(
+                        MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default))
+
+// Adding a GeoJson source for the SymbolLayer icons.
+                .withSource(new GeoJsonSource(SOURCE_ID,
+                        FeatureCollection.fromFeatures(symbolLayerIconFeatureList)))
+
+// Adding the actual SymbolLayer to the map style. An offset is added that the bottom of the red
+// marker icon gets fixed to the coordinate, rather than the middle of the icon being fixed to
+// the coordinate point. This is offset is not always needed and is dependent on the image
+// that you use for the SymbolLayer icon.
+                .withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
+                        .withProperties(
+                                iconImage(ICON_ID),
+                                iconAllowOverlap(true),
+                                iconIgnorePlacement(true)
+                        )
+                ), new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+
+// Map is set up and the style has loaded. Now you can add additional data or make other map adjustments.
+
+
+            }
+        });
+
+//        if(driver_mk==null)
+//        {
+//            driver_mk=mapboxMap.addMarker(new MarkerOptions()
+//                    .position(new LatLng(driverLat, driverLng)));
+//        }else
+//        {
+//            driver_mk.setPosition(new LatLng(driverLat, driverLng));
+//        }
+        getRoute(source_pt,driver_pt);
 
         ExampleBottomSheetDialog.updateDetails();
 
