@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
@@ -93,14 +94,16 @@ public class MainActivity extends AppCompatActivity implements
     ActionBarDrawerToggle toggle;
     DrawerLayout drawerLayout;
 
-    public MapboxMap mapboxMap;
+    public static MapboxMap mapboxMap;
     public MapView mapView;
 
     private String TAG = "MainActivity";
 
     public static  Context cxt;
 
-    private List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
+
+
+    public static List<Feature> symbolLayerIconFeatureList = new ArrayList<>();
 
 
     // Variables needed to handle location permissions
@@ -586,7 +589,7 @@ The permission result is invoked once the user decides whether to allow or deny 
             destination_pt=Point.fromLngLat(foundGeocode.get(0).getLongitude(),foundGeocode.get(0).getLatitude());
             Log.e("Destination location is",String.valueOf(foundGeocode.get(0).getLatitude())+" "+String.valueOf(foundGeocode.get(0).getLongitude()));
 
-            symbolLayerIconFeatureList.add(Feature.fromGeometry(
+            symbolLayerIconFeatureList.add(1,Feature.fromGeometry(
                     Point.fromLngLat(foundGeocode.get(0).getLongitude(), foundGeocode.get(0).getLatitude())));
 
             SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
@@ -623,32 +626,41 @@ The permission result is invoked once the user decides whether to allow or deny 
     @Override
     public boolean onMapClick(@NonNull LatLng point) {
 
-
-        //setting the address string from points
-        getAddressFromLocation(point,MainActivity.this,new GeocoderHandler());
-
-
-
-        //
-        Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
-        Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
-                locationComponent.getLastKnownLocation().getLatitude());
-        source_pt=destinationPoint;
-
-        symbolLayerIconFeatureList.add(Feature.fromGeometry(
-                Point.fromLngLat(point.getLongitude(), point.getLatitude())));
+        SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+        if(sh.getString("ride_id",null)==null)
+        {
+            //setting the address string from points
+            getAddressFromLocation(point,MainActivity.this,new GeocoderHandler());
 
 
 
+            //
+            Point destinationPoint = Point.fromLngLat(point.getLongitude(), point.getLatitude());
+            Point originPoint = Point.fromLngLat(locationComponent.getLastKnownLocation().getLongitude(),
+                    locationComponent.getLastKnownLocation().getLatitude());
+            source_pt=destinationPoint;
 
+            symbolLayerIconFeatureList.clear();
+            symbolLayerIconFeatureList.add(0,Feature.fromGeometry(
+                    Point.fromLngLat(point.getLongitude(), point.getLatitude())));
+
+
+
+            //oth index-customer source
+            //1 -customer destination
+            //2-driver location
 
 //        GeoJsonSource source = mapboxMap.getStyle().getSourceAs("destination-source-id");
 //        if (source != null) {
 //            source.setGeoJson(Feature.fromGeometry(destinationPoint));
 //        }
 
-        button.setEnabled(true);
-        button.setBackgroundResource(R.color.mapbox_blue);
+            button.setEnabled(true);
+            button.setBackgroundResource(R.color.mapbox_blue);
+            return true;
+
+        }
+
         return true;
     }
 
@@ -705,8 +717,10 @@ The permission result is invoked once the user decides whether to allow or deny 
         driverLat = s.getCab_lat();
         driverLng = s.getCab_lng();
 
-        symbolLayerIconFeatureList.add(Feature.fromGeometry(
+        symbolLayerIconFeatureList.add(2,Feature.fromGeometry(
                 Point.fromLngLat(driverLng, driverLat)));
+
+
 
 
         driver_pt=Point.fromLngLat(driverLng, driverLat);
@@ -750,6 +764,8 @@ The permission result is invoked once the user decides whether to allow or deny 
 //        {
 //            driver_mk.setPosition(new LatLng(driverLat, driverLng));
 //        }
+        Log.e("Number of markers",String.valueOf(symbolLayerIconFeatureList.size()));
+        Log.e("markers",String.valueOf(symbolLayerIconFeatureList));
         getRoute(source_pt,driver_pt);
 
         ExampleBottomSheetDialog.updateDetails();
@@ -761,10 +777,44 @@ The permission result is invoked once the user decides whether to allow or deny 
         myEdit.putString("cab_id",cabId);
         myEdit.putString("ride_id",rideId);
         myEdit.putString("driver_phone",s.driver_phone);
+        myEdit.putString("driver_lat",String.valueOf(driverLat));
+        myEdit.putString("driver_lng",String.valueOf(driverLng));
         myEdit.apply();
 
         BackgroundSendNotification backgroundSendNotification=new BackgroundSendNotification(getApplicationContext());
         backgroundSendNotification.execute("Ride Awaiting",cust_name+" has booked a ride "+cust_phone,s.driver_phone);
+    }
+
+
+
+    public  void arrageMarkers()
+    {
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjf4m44iw0uza2spb3q0a7s41")
+
+// Add the SymbolLayer icon image to the map style
+                .withImage(ICON_ID, BitmapFactory.decodeResource(
+                        MainActivity.this.getResources(), R.drawable.mapbox_marker_icon_default))
+
+// Adding a GeoJson source for the SymbolLayer icons.
+                .withSource(new GeoJsonSource(SOURCE_ID,
+                        FeatureCollection.fromFeatures(symbolLayerIconFeatureList)))
+
+// Adding the actual SymbolLayer to the map style. An offset is added that the bottom of the red
+// marker icon gets fixed to the coordinate, rather than the middle of the icon being fixed to
+// the coordinate point. This is offset is not always needed and is dependent on the image
+// that you use for the SymbolLayer icon.
+                .withLayer(new SymbolLayer(LAYER_ID, SOURCE_ID)
+                        .withProperties(
+                                iconImage(ICON_ID),
+                                iconAllowOverlap(true),
+                                iconIgnorePlacement(true)
+                        )
+                ), new Style.OnStyleLoaded() {
+            @Override
+            public void onStyleLoaded(@NonNull Style style) {
+        // Map is set up and the style has loaded. Now you can add additional data or make other map adjustments
+            }
+        });
     }
 
     @Override
@@ -779,6 +829,8 @@ The permission result is invoked once the user decides whether to allow or deny 
         }
     }
 }
+
+
 
 class GeocoderHandler extends Handler {
     @Override

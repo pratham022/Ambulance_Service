@@ -1,5 +1,7 @@
 package com.example.ambulanceservice;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.location.Location;
 import android.util.Log;
 import android.widget.Toast;
@@ -24,6 +26,8 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import timber.log.Timber;
+
+import static android.content.Context.MODE_PRIVATE;
 
 
 public class MainActivityLocationCallback implements LocationEngineCallback<LocationEngineResult> {
@@ -65,7 +69,12 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
             LatLng pt=new LatLng(activity.source.getLatitude(),activity.source.getLongitude());
 
            // activity.getAddressFromLocation(pt,activity,new GeocoderHandler());
-
+            SharedPreferences sh = MainActivity.cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);;
+            if(sh.getString("ride_id", null) != null){
+                String cab_id=sh.getString("cab_id",null);
+                    BackgroundFetchLocation backgroundFetchLocation=new BackgroundFetchLocation(MainActivity.cxt);
+                    backgroundFetchLocation.execute(cab_id);
+            }
 
             if (location == null) {
                 return;
