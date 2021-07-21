@@ -2,6 +2,7 @@ package com.example.ambulanceservice;
 
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -16,6 +17,8 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
 
@@ -107,6 +110,16 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
 //            ExampleBottomSheetDialog.resetDetails();
 //            alertDialog=new AlertDialog.Builder(context).create();
 //            alertDialog.setTitle("Booking canceled successfully");
+            SharedPreferences sh = context.getSharedPreferences("MySharedPref", MODE_PRIVATE);
+            SharedPreferences.Editor editor = sh.edit();
+            editor.remove("ride_started");
+            editor.remove("driver_phone");
+            editor.remove("driver_lat");
+            editor.remove("driver_lng");
+            editor.remove("ride_id");
+            editor.remove("cab_id");
+            editor.commit();
+
             Log.e("cancel cab","success");
         }
         else

@@ -328,7 +328,7 @@ The permission result is invoked once the user decides whether to allow or deny 
         this.mapboxMap = mapboxMap; //when map get's ready it passes mapboxMap instance
 
         //setting style
-        mapboxMap.setStyle(Style.TRAFFIC_NIGHT,
+        mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjf4m44iw0uza2spb3q0a7s41"),
                 new Style.OnStyleLoaded() {
                     @Override
                     public void onStyleLoaded(@NonNull Style style) {
@@ -589,9 +589,16 @@ The permission result is invoked once the user decides whether to allow or deny 
             destination_pt=Point.fromLngLat(foundGeocode.get(0).getLongitude(),foundGeocode.get(0).getLatitude());
             Log.e("Destination location is",String.valueOf(foundGeocode.get(0).getLatitude())+" "+String.valueOf(foundGeocode.get(0).getLongitude()));
 
-            symbolLayerIconFeatureList.add(1,Feature.fromGeometry(
-                    Point.fromLngLat(foundGeocode.get(0).getLongitude(), foundGeocode.get(0).getLatitude())));
 
+            if(symbolLayerIconFeatureList.size()>=2)
+            {
+                symbolLayerIconFeatureList.set(1,Feature.fromGeometry(
+                        Point.fromLngLat(foundGeocode.get(0).getLongitude(), foundGeocode.get(0).getLatitude())));
+            }else
+            {
+                symbolLayerIconFeatureList.add(1,Feature.fromGeometry(
+                        Point.fromLngLat(foundGeocode.get(0).getLongitude(), foundGeocode.get(0).getLatitude())));
+            }
             SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
             String id = sh.getString("id", null);
 
@@ -640,9 +647,16 @@ The permission result is invoked once the user decides whether to allow or deny 
                     locationComponent.getLastKnownLocation().getLatitude());
             source_pt=destinationPoint;
 
-            symbolLayerIconFeatureList.clear();
-            symbolLayerIconFeatureList.add(0,Feature.fromGeometry(
-                    Point.fromLngLat(point.getLongitude(), point.getLatitude())));
+            if(symbolLayerIconFeatureList.size()>=1)
+            {
+                symbolLayerIconFeatureList.set(0,Feature.fromGeometry(
+                        Point.fromLngLat(point.getLongitude(), point.getLatitude())));
+            }else
+            {
+                symbolLayerIconFeatureList.add(0,Feature.fromGeometry(
+                        Point.fromLngLat(point.getLongitude(), point.getLatitude())));
+            }
+
 
 
 
@@ -779,6 +793,7 @@ The permission result is invoked once the user decides whether to allow or deny 
         myEdit.putString("driver_phone",s.driver_phone);
         myEdit.putString("driver_lat",String.valueOf(driverLat));
         myEdit.putString("driver_lng",String.valueOf(driverLng));
+        myEdit.putString("ride_started","no");
         myEdit.apply();
 
         BackgroundSendNotification backgroundSendNotification=new BackgroundSendNotification(getApplicationContext());
@@ -787,6 +802,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
 
+    @SuppressLint("LongLogTag")
     public  void arrageMarkers()
     {
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjf4m44iw0uza2spb3q0a7s41")
@@ -815,6 +831,20 @@ The permission result is invoked once the user decides whether to allow or deny 
         // Map is set up and the style has loaded. Now you can add additional data or make other map adjustments
             }
         });
+        if(symbolLayerIconFeatureList.size()>2)
+        {
+            getRoute(source_pt,driver_pt);
+        }
+        else
+        {
+            Log.e("From source to dest","get route");
+            SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+            SharedPreferences.Editor myEdit = sh.edit();
+            myEdit.putString("ride_started","yes");
+            myEdit.apply();
+            getRoute(source_pt,destination_pt);
+        }
+
     }
 
     @Override

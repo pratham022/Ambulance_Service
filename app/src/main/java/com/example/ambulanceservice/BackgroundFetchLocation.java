@@ -27,6 +27,8 @@ public class BackgroundFetchLocation  extends AsyncTask<String, Void, String> {
 
     Context cxt;
 
+    public AsyncResponseString delegate = null;
+
     BackgroundFetchLocation()
     {
 
@@ -97,15 +99,8 @@ public class BackgroundFetchLocation  extends AsyncTask<String, Void, String> {
 
     protected void onPostExecute(String s)
     {
-        String[] location = s.split(" ");
-        SharedPreferences sh = cxt.getSharedPreferences("MySharedPref", MODE_PRIVATE);
-        SharedPreferences.Editor myEdit = sh.edit();
-        myEdit.putString("driver_lat",String.valueOf(location[0]));
-        myEdit.putString("driver_lng",String.valueOf(location[1]));
-        myEdit.apply();
-        Log.e("driver_lat",sh.getString("driver_lat",null));
-        Log.e("driver_lng",sh.getString("driver_lng",null));
-        MainActivity.symbolLayerIconFeatureList.add(2, Feature.fromGeometry(Point.fromLngLat(Double.valueOf(location[1]), Double.valueOf(location[0]))));
+        delegate.processStringFinish(s);
+
 
     }
 
