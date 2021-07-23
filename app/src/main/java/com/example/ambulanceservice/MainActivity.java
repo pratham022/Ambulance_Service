@@ -52,6 +52,8 @@ import com.mapbox.mapboxsdk.annotations.Icon;
 import com.mapbox.mapboxsdk.annotations.IconFactory;
 import com.mapbox.mapboxsdk.annotations.Marker;
 import com.mapbox.mapboxsdk.annotations.MarkerOptions;
+import com.mapbox.mapboxsdk.camera.CameraPosition;
+import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.location.LocationComponent;
 import com.mapbox.mapboxsdk.location.LocationComponentActivationOptions;
@@ -262,6 +264,25 @@ The permission result is invoked once the user decides whether to allow or deny 
     {
         Intent intent=new Intent(this,Rides.class);
         startActivity(intent);
+    }
+
+    public void recenterUser(View view)
+    {
+        Log.e("In recentre","source");
+
+        CameraPosition position = new CameraPosition.Builder()
+                .target(new LatLng(source_pt.latitude(), source_pt.longitude())) // Sets the new camera position
+                .zoom(17) // Sets the zoom
+                .bearing(180) // Rotate the camera
+                .tilt(30) // Set the camera tilt
+                .build(); // Creates a CameraPosition from the builder
+
+        mapboxMap.animateCamera(CameraUpdateFactory
+                .newCameraPosition(position), 7000);
+
+
+
+
     }
 
 
@@ -875,6 +896,7 @@ class GeocoderHandler extends Handler {
                 result = null;
         }
         // replace by what you need to do
+        Log.e("geocoder source",result);
         MainActivity.txtSource.setText(result);
     }
 }
