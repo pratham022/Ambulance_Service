@@ -118,6 +118,9 @@ public class BackgroundCancelCab extends AsyncTask<String, Void, String> {
             editor.remove("driver_lng");
             editor.remove("ride_id");
             editor.remove("cab_id");
+            MainActivity.source_pt=null;
+            MainActivity.destination_pt=null;
+            ExampleBottomSheetDialog.resetDetails();
             editor.commit();
 
             Log.e("cancel cab","success");

@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements
 
     // variables for calculating and drawing a route
     private DirectionsRoute currentRoute;
-    private NavigationMapRoute navigationMapRoute;
+    public NavigationMapRoute navigationMapRoute;
 
     // variables needed to initialize navigation
     private Button button;
@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements
     public static EditText txtSource;
     public static EditText txtDestination;
     public Location source;
-    public Point source_pt,destination_pt, driver_pt;
+    public static Point source_pt,destination_pt, driver_pt;
     Marker driver_mk=null;
 
     private String rideId = "";
@@ -403,6 +403,7 @@ The permission result is invoked once the user decides whether to allow or deny 
                             navigationMapRoute = new NavigationMapRoute(null, mapView, mapboxMap, R.style.NavigationMapRoute);
                         }
                         navigationMapRoute.addRoute(currentRoute);
+
 
                     }
 
@@ -824,7 +825,7 @@ The permission result is invoked once the user decides whether to allow or deny 
 
 
     @SuppressLint("LongLogTag")
-    public  void arrageMarkers()
+    public void arrageMarkers()
     {
         mapboxMap.setStyle(new Style.Builder().fromUri("mapbox://styles/mapbox/cjf4m44iw0uza2spb3q0a7s41")
 
@@ -852,19 +853,25 @@ The permission result is invoked once the user decides whether to allow or deny 
         // Map is set up and the style has loaded. Now you can add additional data or make other map adjustments
             }
         });
-        if(symbolLayerIconFeatureList.size()>2)
+        if(symbolLayerIconFeatureList.size()>0)
         {
-            getRoute(source_pt,driver_pt);
+            if(symbolLayerIconFeatureList.size()>2)
+            {
+                getRoute(source_pt,driver_pt);
+            }
+            else
+            {
+                Log.e("From source to dest","get route");
+                Toast.makeText(getApplicationContext(),"Your ambulance has arrived",Toast.LENGTH_LONG).show();
+                SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
+                SharedPreferences.Editor myEdit = sh.edit();
+                myEdit.putString("ride_started","yes");
+                myEdit.apply();
+                getRoute(source_pt,destination_pt);
+            }
+
         }
-        else
-        {
-            Log.e("From source to dest","get route");
-            SharedPreferences sh = getSharedPreferences("MySharedPref", MODE_PRIVATE);
-            SharedPreferences.Editor myEdit = sh.edit();
-            myEdit.putString("ride_started","yes");
-            myEdit.apply();
-            getRoute(source_pt,destination_pt);
-        }
+
 
     }
 
@@ -896,7 +903,7 @@ class GeocoderHandler extends Handler {
                 result = null;
         }
         // replace by what you need to do
-        Log.e("geocoder source",result);
+        //Log.e("geocoder source",result);
         MainActivity.txtSource.setText(result);
     }
 }

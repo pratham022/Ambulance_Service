@@ -65,6 +65,18 @@ public class MainActivityLocationCallback implements LocationEngineCallback<Loca
 
             activity.source=location;
 
+            if(MainActivity.source_pt==null)
+            {
+                MainActivity.symbolLayerIconFeatureList.clear();
+                activity.arrageMarkers();
+                if(activity.navigationMapRoute!=null)
+                {
+                    activity.navigationMapRoute.removeRoute();
+                }
+
+                MainActivity.source_pt=Point.fromLngLat(activity.source.getLongitude(),activity.source.getLatitude());
+            }
+
             Log.e("Hi Prathu",String.valueOf(activity.source.getLatitude())+" "+String.valueOf(activity.source.getLongitude()));
 
             LatLng pt=new LatLng(activity.source.getLatitude(),activity.source.getLongitude());
